@@ -44,7 +44,9 @@
 	       ))
 	 (do0
 	  "# load the url"
-	  (setf url (gen_url :keywords (string "vega 56")))
+	  (setf url (gen_url :keywords (string "vega 56")
+			     :maxPrice (string "350")
+			     :minPrice (string "120")))
 	  (setf r (requests.get url)
 		content (r.text.replace (string "&#8203") (string ""))
 		soup (BeautifulSoup content (string "html.parser"))
@@ -59,8 +61,8 @@
 	  "# parse articles"
 	  (setf res (list))
 	  (for (article articles)
-	       ,(let ((l `((details (article.find (string "section") (dict ((string "class")
-								     (string "additem-details")))))
+	       ,(let ((l `((details (article.find (string "div") (dict ((string "class")
+								     (string "aditem-details")))))
 			    (price (and details
 					(dot (details.find (string "strong"))
 					 text)))
@@ -72,8 +74,13 @@
 			    (href (and header
 				       (aref (header.find (string "a")
 						      :href True)
-					 (string "href"))))
-			    (ignore False))))
+					     (string "href"))))
+			   (date (dot (article.find (string "div")
+						    (dict ((string "class")
+							   (string "aditem-addon"))))
+				      text
+				      (strip)))
+			   (ignore False))))
 		   `(do0
 		     ,@(loop for e in l collect
 			    (destructuring-bind (name code) e

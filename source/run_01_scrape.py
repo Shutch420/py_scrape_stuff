@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 def gen_url(keywords="", categoryId="", locationStr="", locationId="", radius="", sortingField="SORTING_DATE", adType="", posterType="", pageNum="1", action="find", maxPrice="", minPrice=""):
     return "https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?&keywords={}&categoryId={}&locationStr={}&locationId={}&radius={}&sortingField={}&adType={}&posterType={}&pageNum={}&action={}&maxPrice={}&minPrice={}".format(urllib.parse.quote(keywords), urllib.parse.quote(categoryId), urllib.parse.quote(locationStr), urllib.parse.quote(locationId), urllib.parse.quote(radius), urllib.parse.quote(sortingField), urllib.parse.quote(adType), urllib.parse.quote(posterType), urllib.parse.quote(pageNum), urllib.parse.quote(action), urllib.parse.quote(maxPrice), urllib.parse.quote(minPrice))
 # load the url
-url=gen_url(keywords="vega 56")
+url=gen_url(keywords="vega 56", maxPrice="350", minPrice="120")
 r=requests.get(url)
 content=r.text.replace("&#8203", "")
 soup=BeautifulSoup(content, "html.parser")
@@ -20,11 +20,12 @@ if ( articles is None ):
 # parse articles
 res=[]
 for article in articles:
-    details=article.find("section", {("class"):("additem-details")})
+    details=article.find("div", {("class"):("aditem-details")})
     price=((details) and (details.find("strong").text))
     vb=((price) and (("VB" in price)))
     header=article.find("h2", {("class"):("text-module-begin")})
     href=((header) and (header.find("a", href=True)["href"]))
+    date=article.find("div", {("class"):("aditem-addon")}).text.strip()
     ignore=False
-    res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("ignore"):(ignore)})
+    res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("date"):(date),("ignore"):(ignore)})
 df=pd.DataFrame(res)
