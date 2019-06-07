@@ -21,11 +21,10 @@ if ( articles is None ):
 res=[]
 for article in articles:
     details=article.find("section", {("class"):("additem-details")})
-    price=details.find("strong").text
-    vb=("VB" in price)
+    price=((details) and (details.find("strong").text))
+    vb=((price) and (("VB" in price)))
     header=article.find("h2", {("class"):("text-module-begin")})
-    href=header.find("a", href=True)["href"]
+    href=((header) and (header.find("a", href=True)["href"]))
     ignore=False
-    res.append
-    {("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("ignore"):(ignore)}
+    res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("ignore"):(ignore)})
 df=pd.DataFrame(res)

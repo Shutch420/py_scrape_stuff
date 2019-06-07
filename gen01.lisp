@@ -59,24 +59,28 @@
 	  "# parse articles"
 	  (setf res (list))
 	  (for (article articles)
-	       (setf details (article.find (string "section") (dict ((string "class")
-								     (string "additem-details"))))
-		     price (dot (details.find (string "strong"))
-				text)
-		     vb (in (string "VB") price)
-					;(ntuple zip_code city owner_distance)
-		     header (article.find (string "h2")
+	       ,(let ((l `((details (article.find (string "section") (dict ((string "class")
+								     (string "additem-details")))))
+			    (price (and details
+					(dot (details.find (string "strong"))
+					 text)))
+			    (vb (and price
+				     (in (string "VB") price)))
+			    (header (article.find (string "h2")
 					  (dict ((string "class")
-						 (string "text-module-begin"))))
-		     href (aref (header.find (string "a")
-					     :href True)
-				(string "href"))
-					;description
-		     ignore False
-		     )
-	       ,@(let ((l `(details price vb header href ignore)))
-		   `(res.append (dict ,@(loop for e in l collect
-					     `((string ,e) ,e))))))
+						 (string "text-module-begin")))))
+			    (href (and header
+				       (aref (header.find (string "a")
+						      :href True)
+					 (string "href"))))
+			    (ignore False))))
+		   `(do0
+		     ,@(loop for e in l collect
+			    (destructuring-bind (name code) e
+			      `(setf ,name ,code)))
+		     (res.append (dict ,@(loop for e in l collect
+					      (destructuring-bind (name code) e
+					       `((string ,name) ,name))))))))
 	  (setf df (pd.DataFrame res)))
 	 
 	 )))
