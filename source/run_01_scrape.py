@@ -26,11 +26,22 @@ for idx, (keywords,gen_id,) in enumerate(intel_processors):
             logging.info("No articles match {}.".format(keywords))
         # parse articles
         for article in articles:
-            quasiquote(try:
-                nil
+            try:
+                details=article.find("div", {("class"):("aditem-details")})
+                price=((details) and (details.find("strong").text))
+                vb=((price) and (("VB" in price)))
+                header=article.find("h2", {("class"):("text-module-begin")})
+                href=((header) and (header.find("a", href=True)["href"]))
+                date=article.find("div", {("class"):("aditem-addon")}).text.strip()
+                ignore=False
+                timestamp=time.time()
+                content=article
+                search=keywords
+                generation=gen_id
+                res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("date"):(date),("ignore"):(ignore),("timestamp"):(timestamp),("content"):(content),("search"):(search),("generation"):(generation)})
             except Exception as e:
                 print("WARNING problem {} in article {}".format(e, article))
-                pass)
+                pass
         df=pd.DataFrame(res)
         df.to_csv("output.csv")
     except Exception as e:

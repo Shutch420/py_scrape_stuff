@@ -163,7 +163,7 @@
 		  "# parse articles"
 	     
 		  (for (article articles)
-		       `(try
+		       (try
 			 (do0
 			  ,(let ((l `((details (article.find (string "div") (dict ((string "class")
 										   (string "aditem-details")))))
