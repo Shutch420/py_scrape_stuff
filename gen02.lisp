@@ -33,7 +33,7 @@
 			   (aref (split (string "\\u20ac")) 0)
 			   ))))
 	    ("Exception as e"
-	     (return 0d0))))
+	     (return 0d0)))) 
 
 	 (def parse_distance (row)
 	   (try
