@@ -13,6 +13,8 @@
 		   requests
 		   urllib
 		   time
+		   functools
+		   operator
 		   )) 
 	 "from bs4 import BeautifulSoup"
 	 ,(let ((l `((mfgr (string "NVIDIA"))
@@ -46,10 +48,20 @@
 							 (string "processors"))))
 		head (table.find (string "thead") (dict ((string "class")
 							 (string "colheader"))))
-		columns ("list" (map (lambda (x) x.text) (head.find_all (string "th"))))
-		rows (rows.find_all (string "tr"))
+		columns ("list" (map (lambda (x) (x.text.strip)) (head.find_all (string "th"))))
+		rows (dot table
+			  (find_all (string "tr")))
+		data ("list" (map (lambda (row)
+				    ("dict" (zip
+				      columns
+				      (map (lambda (td)
+					     (td.text.strip))
+					   (row.find_all (string "td"))))))
+				  (aref rows "2:") ;; top two rows are no data
+ 				  ))
+		;data1 (functools.reduce operator.iconcat data (list))
+		df (pd.DataFrame data)
 		)
 	  )
-	 
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_03_scrape_techpowerup" code))

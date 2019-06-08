@@ -7,6 +7,8 @@ import logging
 import requests
 import urllib
 import time
+import functools
+import operator
 from bs4 import BeautifulSoup
 def gen_url(mfgr="NVIDIA", released="2008", sort="name"):
     return "https://www.techpowerup.com/gpu-specs/?&mfgr={}&released={}&sort={}".format(urllib.parse.quote(mfgr), urllib.parse.quote(released), urllib.parse.quote(sort))
@@ -17,5 +19,7 @@ content=r.text.replace("&#8203", "")
 soup=BeautifulSoup(content, "html.parser")
 table=soup.find("table", {("class"):("processors")})
 head=table.find("thead", {("class"):("colheader")})
-columns=map(lambda x: x.text, head.find_all("th"))
-rows=rows.find_all("tr")
+columns=list(map(lambda x: x.text.strip(), head.find_all("th")))
+rows=table.find_all("tr")
+data=list(map(lambda row: dict(zip(columns, map(lambda td: td.text.strip(), row.find_all("td")))), rows[2:]))
+df=pd.DataFrame(data)
