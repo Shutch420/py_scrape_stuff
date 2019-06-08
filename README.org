@@ -1,0 +1,7 @@
+* Potential websites
+
+| site                                                         | priority |   |   |   |
+|--------------------------------------------------------------+----------+---+---+---|
+| https://www.shpock.com/de-de?location=51.3642126%2C6.4195011 |        3 |   |   |   |
+| https://www.quoka.de/computer/kleinanzeigen.html             |        2 |   |   |   |
+| https://www.ebay-kleinanzeigen.de/                           |        1 |   |   |   |
