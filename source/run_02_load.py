@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 plt.ion()
 import pandas as pd
 import pathlib
-df=pd.read_csv("output_20190608b.csv")
+df=pd.read_csv("output_kempen_pc.csv")
 def parse_price(row):
     try:
         p=row["price"].strip()
@@ -23,7 +23,7 @@ desktop=((df1.link_name.str.contains("thinkcentre")) | (df1.link_name.str.contai
 older_than_haskell=((df1.link_name.str.contains("i3-2")) | (df1.link_name.str.contains("i3-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")))
 df2=df1[((((20)<(df1.index))) & (~laptop) & (~cpu) & (~older_than_haskell) & (desktop))]
 with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.max_colwidth", 1000, "display.width", 1000):
-    print(df2[["link_name", "generation"]])
+    print(df2[["link_name", "gen_id"]])
 plt.hist(df1[((0)<(df1.index))].index, bins=120)
 plt.hist(df1[((((0)<(df1.index))) & (~laptop))].index, bins=120)
 plt.grid()

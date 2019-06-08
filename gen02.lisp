@@ -13,7 +13,7 @@
 		   (pd pandas)
 		   pathlib
 		   )) 
-	 (setf df (pd.read_csv (string "output_20190608b.csv")))
+	 (setf df (pd.read_csv (string "output_kempen_pc.csv" #+nil "output_20190608b.csv")))
 
 	 (def parse_price (row)
 	   (try
@@ -71,7 +71,7 @@
 				  (string "display.max_colwidth") 1000
 				  (string "display.width") 1000)
                (print (aref df2 (list (string "link_name")
-				      (string "generation")))))
+				      (string "gen_id")))))
 	 (plt.hist (dot (aref df1 (< 0 df1.index))
 			index) :bins 120)
 	 (plt.hist (dot (aref df1 (& (< 0 df1.index)
