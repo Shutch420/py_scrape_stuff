@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 plt.ion()
 import pandas as pd
 import pathlib
+import html
+from bs4 import BeautifulSoup
 df=pd.read_csv("output_kempen_pc.csv")
 def parse_price(row):
     try:
@@ -22,10 +24,8 @@ cpu=((df1.link_name.str.contains("processor")) | (df1.link_name.str.contains("pr
 desktop=((df1.link_name.str.contains("thinkcentre")) | (df1.link_name.str.contains("lenovo")) | (df1.link_name.str.contains("hp")) | (df1.link_name.str.contains("fujitsu")) | (df1.link_name.str.contains("medion")) | (df1.link_name.str.contains("dell")) | (df1.link_name.str.contains("optiplex")) | (df1.link_name.str.contains("prodesk")) | (df1.link_name.str.contains("esprimo")) | (df1.link_name.str.contains("workstation")) | (df1.link_name.str.contains("elitedesk")))
 older_than_haskell=((df1.link_name.str.contains("i3-2")) | (df1.link_name.str.contains("i3-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")))
 df2=df1[((((20)<(df1.index))) & (~laptop) & (~cpu) & (~older_than_haskell) & (desktop))]
-df2_xeon=df2[df2.link_name.str.contains("xeon")]
-df2_i5=df2[df2.link_name.str.contains("i5")]
-df2_i7=df2[df2.link_name.str.contains("i7")]
-df2_i3=df2[df2.link_name.str.contains("i3")]
+soup=BeautifulSoup(df2.iloc[10].content, "html.parser")
+details=soup.find("div", {("class"):("aditem-details")})
 def tbl(df2):
     with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.max_colwidth", 1000, "display.width", 1000):
         print(df2[["link_name", "gen_id", "group_keyword", "device_id"]])

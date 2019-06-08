@@ -12,8 +12,14 @@
 	 (imports (
 		   (pd pandas)
 		   pathlib
-		   )) 
-	 (setf df (pd.read_csv (string "output_kempen_pc.csv" #+nil "output_20190608b.csv")))
+		   html
+		   ))
+	 "from bs4 import BeautifulSoup"
+	 (setf df (pd.read_csv (string ;"output_20190608b.csv"
+				"output_kempen_pc.csv"
+				
+				;"output_germany_pc_a.csv"
+				)))
 
 	 (def parse_price (row)
 	   (try
@@ -67,6 +73,12 @@
 				))
 	       
 	       )
+	 
+	 (setf soup (BeautifulSoup (dot (aref df2.iloc 10) content) (string "html.parser"))
+	       details (soup.find (string "div") (dict ((string "class")
+							(string "aditem-details")))))
+	 ;; float(details.text.split('\n')[-1].strip().split(' ')[0])
+	 #+nil
 	 ,@(loop for e in `(xeon i5 i7 i3) collect
 		 `(setf ,(format nil "df2_~a" e) (aref df2 (df2.link_name.str.contains (string ,e)))))
 	    
