@@ -30,11 +30,12 @@
 					      `(,name ,value)
 					      `(,name (string ""))))))
 	       (return (dot (string ,(with-output-to-string (s)
-				   (format s "https://www.techpowerup.com/gpu-specs/?")
-				   (loop for e in l collect
-					(destructuring-bind (name &optional value) e
-					  (format s "&~a={}" name value)))))
-			    (format ,@(loop for e in l collect
+				       (format s "https://www.techpowerup.com/{}/?")
+				       (loop for e in l collect
+					    (destructuring-bind (name &optional value) e
+					      (format s "&~a={}" name value)))))
+			    (format database
+				    ,@(loop for e in l collect
 					   (destructuring-bind (name &optional value) e
 					     `(urllib.parse.quote ,name))))))
 	       ))
@@ -46,12 +47,13 @@
 	      (if (== database (string "cpudb"))
 		  (setf mfgrs (list (string "Intel")
 				    (string "AMD")))
-		  (setf mfgrs (list (string "NVIDIA")
-				    (string "AMD"))))
+		  (if (== database (string "gpu-spec"))
+		   (setf mfgrs (list (string "NVIDIA")
+				     (string "AMD")))))
 	      (for (mfgr mfgrs)
 	       (for (year (range 2006 (+ 1 2019)))
 		    (do0
-		     (setf url (gen_url :mfgr mfgr :released (str year)))
+		     (setf url (gen_url :database database :mfgr mfgr :released (str year)))
 		     (time.sleep 3)
 		     (print (dot (string "requesting {}")
 				 (format url)))
@@ -71,14 +73,16 @@
 									(tuple (string "year") year)
 									(tuple (string "url") ;;(rows[12].find('td',{"class":"vendor-NVIDIA"})).a['href']
 
-									       (dot
-										row
-										(find (string "td")
-										      (dict ((string "class")
-											     (+ (string "vendor-") mfgr))))
-										(aref a #+nil (find (string "a")
-												    :href True)
-										      (string "href")))))
+									       (or (and (== database (string "gpu-spec"))
+											(dot (row.find (string "td")
+												   (dict ((string "class")
+													  (+ (string "vendor-") mfgr))))
+											     (aref a (string "href"))))
+										   (and (== database (string "cpudb"))
+											(dot (row.find (string "td"))
+											     (aref a (string "href")))
+											))
+									       ))
 								  ("list"
 								   (zip
 								    columns
