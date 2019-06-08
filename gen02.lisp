@@ -3,7 +3,7 @@
 
 (let ((code
        `(do0
-	 #+nil(do0
+	 #-nil(do0
                           (imports (matplotlib))
                                         ;(matplotlib.use (string "Agg"))
                           (imports ((plt matplotlib.pyplot)))
@@ -42,19 +42,25 @@
 			 :axis 1))
 	 (setf df1 (dot (df.set_index (string "price_eur"))
 			(sort_index))
-	       laptop (|\|| ,@ (loop for e in `(probook notebook laptop thinkpad ideapad) collect
-						   `(df1.link_name.str.contains (string ,e))))
+	       laptop (|\|| ,@ (loop for e in `(probook notebook laptop thinkpad ideapad lifebook yoga latitude) collect
+				    `(df1.link_name.str.contains (string ,e))))
+	       nvidia (|\|| ,@ (loop for e in `(gtx nvidia) collect
+				    `(df1.link_name.str.contains (string ,e))))
+	       amd (|\|| ,@ (loop for e in `(hd amd radeon) collect
+				    `(df1.link_name.str.contains (string ,e))))
 	       df2 (aref df1 (& (< 20 df1.index)
 				(< df1.index 220)
 					;(< 4 df1.generation)
 				~laptop
-				(|\|| ,@ (loop for e in `(thinkcentre lenovo hp fujitsu medion dell prodesk esprimo) collect
+				#+nil (|\|| nvidia
+				      amd)
+				(|\|| ,@ (loop for e in `(thinkcentre lenovo hp fujitsu medion dell optiplex prodesk esprimo) collect
 					      `(df1.link_name.str.contains (string ,e))))
 				)))
 	 (with (pd.option_context (string "display.max_rows") None
                                   (string "display.max_columns") None)
                (print (aref df2 (list (string "link_name")
 				      (string "generation")))))
-	 (plt.hist (df1.index) :bins 100)
+	 (plt.hist df1.index :bins 100)
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_02_load" code))
