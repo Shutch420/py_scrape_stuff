@@ -6,6 +6,7 @@ import json
 import logging
 import requests
 import urllib
+import time
 from bs4 import BeautifulSoup
 def gen_url(keywords="", categoryId="", locationStr="", locationId="", radius="", sortingField="SORTING_DATE", adType="", posterType="", pageNum="1", action="find", maxPrice="", minPrice=""):
     return "https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?&keywords={}&categoryId={}&locationStr={}&locationId={}&radius={}&sortingField={}&adType={}&posterType={}&pageNum={}&action={}&maxPrice={}&minPrice={}".format(urllib.parse.quote(keywords), urllib.parse.quote(categoryId), urllib.parse.quote(locationStr), urllib.parse.quote(locationId), urllib.parse.quote(radius), urllib.parse.quote(sortingField), urllib.parse.quote(adType), urllib.parse.quote(posterType), urllib.parse.quote(pageNum), urllib.parse.quote(action), urllib.parse.quote(maxPrice), urllib.parse.quote(minPrice))
@@ -27,5 +28,9 @@ for article in articles:
     href=((header) and (header.find("a", href=True)["href"]))
     date=article.find("div", {("class"):("aditem-addon")}).text.strip()
     ignore=False
-    res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("date"):(date),("ignore"):(ignore)})
+    timestamp=time.time()
+    content=article
+    search_url=url
+    res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("date"):(date),("ignore"):(ignore),("timestamp"):(timestamp),("content"):(content),("search_url"):(search_url)})
 df=pd.DataFrame(res)
+df.to_csv("output.csv")

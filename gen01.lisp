@@ -1,6 +1,12 @@
 (eval-when (:compile-toplevel :execute :load-toplevel)
   (ql:quickload :cl-py-generator))
 
+
+(define *intel4*
+    `((desktop core (5960X 5930K 5820K 4790K 4790 4790S 4790T 4785T 4771 4770K 4770 4770S 4770R 4770T 4770TE 4765T 4690K 4690 4690S 4690T 4670K 4670 4670S 4670R 4670T 4590 4590S 4590T 4570 4570S 4570R 4570T 4570TE 4460 4460S 4460T 4440 4440S 4430 4430S 4370 4360 4350 4340 4330 4370T 4360T 4350T 4330T 4340TE 4330TE 4170 4160 4150 4130 4170T 4160T 4150T 4130T G3470 G3460 G3450 G3440 G3430 G3420 G3460T G3450T G3440T G3420T G3320TE G3260 G3258[c] G3250 G3240 G3220 G3260T G3250T G3240T G3220T G1850 G1840 G1830 G1820 G1840T G1820T G1820TE))
+      (server xeon (8893v3 8891v3 8890v3 8880v3 8880Lv3 8870v3 8867v3 8860v3 4850v3 4830v3 4820v3 4809v3 1286v3 1286Lv3 1285v3 1285Lv3 1284Lv3 1281v3 1280v3 1276v3 1275v3 1275Lv3 1271v3 1270v3 1268Lv3 1265Lv3 1246v3 1245v3 1241v3 1240v3 1240Lv3 1231v3 1230v3 1230Lv3 1226v3 1225v3 1220v3 1220Lv3))
+      (mobile (4940MX 4930MX 4980HQ 4960HQ 4950HQ 4910MQ 4900MQ 4870HQ 4860EQ 4860HQ 4850EQ 4850HQ 4810MQ 4800MQ 4770HQ 4760HQ 4750HQ 4720HQ 4712MQ 4712HQ 4710MQ 4710HQ 4702MQ 4702HQ 4700MQ 4700HQ 4701EQ 4700EQ 4702EC 4700EC 4650U 4610Y 4610M 4600M 4600U 4578U 4558U 4550U 4510U 4500U 4402EC 4422E 4410E 4402E 4400E 4360U 4350U 4340M 4330M 4310M 4310U 4302Y 4300Y 4300M 4300U 4288U 4258U 4308U 4260U 4250U 4210H 4210M 4210U 4220Y 4210Y 4202Y 4200Y 4200U 4200H 4200M 4158U 4120U 4112E 4110E 4102E 4100E 4110M 4100M 4100U 4030Y 4020Y 4012Y 4010Y 4030U 4025U 4010U 4005U 4000M 3561Y 3560Y 3558U 3556U 3560M 3550M 2981U 2980U 2957U 2955U 2970M 2950M 2961Y)) ))
+
 (in-package :cl-py-generator)
 (let ((code
        `(do0
@@ -12,6 +18,7 @@
 		   logging
 		   requests
 		   urllib
+		   time
 		   ))
 	 "from bs4 import BeautifulSoup"
 	 ,(let ((l `((keywords)
@@ -44,9 +51,11 @@
 	       ))
 	 (do0
 	  "# load the url"
+	  #+nil
 	  (setf url (gen_url :keywords (string "vega 56")
 			     :maxPrice (string "350")
 			     :minPrice (string "120")))
+	  (setf url (gen_url :keywords (string "vega 56")))
 	  (setf r (requests.get url)
 		content (r.text.replace (string "&#8203") (string ""))
 		soup (BeautifulSoup content (string "html.parser"))
@@ -80,7 +89,10 @@
 							   (string "aditem-addon"))))
 				      text
 				      (strip)))
-			   (ignore False))))
+			   (ignore False)
+			   (timestamp (time.time))
+			   (content article)
+			   (search_url url))))
 		   `(do0
 		     ,@(loop for e in l collect
 			    (destructuring-bind (name code) e
@@ -88,7 +100,8 @@
 		     (res.append (dict ,@(loop for e in l collect
 					      (destructuring-bind (name code) e
 					       `((string ,name) ,name))))))))
-	  (setf df (pd.DataFrame res)))
+	  (setf df (pd.DataFrame res))
+	  (df.to_csv (string "output.csv")))
 	 
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_01_scrape" code))
