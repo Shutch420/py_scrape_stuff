@@ -84,7 +84,7 @@
 	(i5 "Core i5 "	(8305G))
 	(i7 "Core i7 "	(8510Y 8500Y))
 	(i5 "Core i5 "	(8310Y 8210Y 8200Y))
-	(intel "Core m3 "	(8100Y) ))))))
+	(intel "Core m3 "	(8100Y) )))))
 
 (in-package :cl-py-generator)
 (let ((code
@@ -148,15 +148,14 @@
 	       (try
 		(do0
 		 (time.sleep 3)
-		 (print (dot (string "searching for {} [{}/{}].")
-			     (format keywords idx (len intel_processors))))
+		 
 		 
 		 
 		 (setf url (gen_url :keywords keywords
 				    :categoryId (string "228")  ;; PCs
 				    ;:radius (string "30") ;; km
-				    ;:locationStr (string "Kempen+-+Nordrhein-Westfalen")
-				    ;:locationId (string "1139")
+				    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
+				    :locationId (string "1139")
 				    ))
 		 (setf r (requests.get url)
 		       content (r.text.replace (string "&#8203") (string ""))
@@ -171,7 +170,8 @@
 		      ))
 		 (do0
 		  "# parse articles"
-	     
+		  (print (dot (string "searching for {} [{}/{}] {} articles.")
+			     (format keywords idx (len intel_processors) (len articles))))
 		  (for (article articles)
 		       (try
 			 (do0
@@ -215,7 +215,7 @@
 				      (format e article)))
 			  pass)))
 		  (setf df (pd.DataFrame res))
-		  (df.to_csv (string "output_germany_pc.csv"))))
+		  (df.to_csv (string "output_germany_pc_distance_to_kempen.csv"))))
 		("Exception as e"
 		 (print (dot (string "WARNING problem {} in keyword {}")
 			     (format e keywords)))

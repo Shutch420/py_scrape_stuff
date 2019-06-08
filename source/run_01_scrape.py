@@ -16,8 +16,7 @@ res=[]
 for idx, (keywords,gen_id,group_keyword,device_id,) in enumerate(intel_processors):
     try:
         time.sleep(3)
-        print("searching for {} [{}/{}].".format(keywords, idx, len(intel_processors)))
-        url=gen_url(keywords=keywords, categoryId="228")
+        url=gen_url(keywords=keywords, categoryId="228", locationStr="Kempen+-+Nordrhein-Westfalen", locationId="1139")
         r=requests.get(url)
         content=r.text.replace("&#8203", "")
         soup=BeautifulSoup(content, "html.parser")
@@ -25,6 +24,7 @@ for idx, (keywords,gen_id,group_keyword,device_id,) in enumerate(intel_processor
         if ( articles is None ):
             logging.info("No articles match {}.".format(keywords))
         # parse articles
+        print("searching for {} [{}/{}] {} articles.".format(keywords, idx, len(intel_processors), len(articles)))
         for article in articles:
             try:
                 details=article.find("div", {("class"):("aditem-details")})
@@ -45,7 +45,7 @@ for idx, (keywords,gen_id,group_keyword,device_id,) in enumerate(intel_processor
                 print("WARNING problem {} in article {}".format(e, article))
                 pass
         df=pd.DataFrame(res)
-        df.to_csv("output_germany_pc.csv")
+        df.to_csv("output_germany_pc_distance_to_kempen.csv")
     except Exception as e:
         print("WARNING problem {} in keyword {}".format(e, keywords))
         pass
