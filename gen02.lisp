@@ -41,14 +41,20 @@
 				))
 			 :axis 1))
 	 (setf df1 (dot (df.set_index (string "price_eur"))
-			(sort_index)))
+			(sort_index))
+	       laptop (|\|| ,@ (loop for e in `(probook notebook laptop thinkpad ideapad) collect
+						   `(df1.link_name.str.contains (string ,e))))
+	       df2 (aref df1 (& (< 20 df1.index)
+				(< df1.index 220)
+					;(< 4 df1.generation)
+				~laptop
+				(|\|| ,@ (loop for e in `(thinkcentre lenovo hp fujitsu medion dell prodesk esprimo) collect
+					      `(df1.link_name.str.contains (string ,e))))
+				)))
 	 (with (pd.option_context (string "display.max_rows") None
                                   (string "display.max_columns") None)
-               (print (aref (aref df1 (& (< 20 df1.index)
-					;(< df1.index 120)
-				       (|\|| ,@ (loop for e in `(thinkcentre hp fujitsu medion) collect
-						     `(df1.link_name.str.contains (string ,e))))
-				       )) (list (string "link_name")))))
+               (print (aref df2 (list (string "link_name")
+				      (string "generation")))))
 	 (plt.hist (df1.index) :bins 100)
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_02_load" code))
