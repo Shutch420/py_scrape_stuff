@@ -3,6 +3,12 @@
 
 (let ((code
        `(do0
+	 #+nil(do0
+                          (imports (matplotlib))
+                                        ;(matplotlib.use (string "Agg"))
+                          (imports ((plt matplotlib.pyplot)))
+                          (plt.ion))
+
 	 (imports (
 		   (pd pandas)
 		   pathlib
@@ -38,7 +44,11 @@
 			(sort_index)))
 	 (with (pd.option_context (string "display.max_rows") None
                                   (string "display.max_columns") None)
-               (print (aref df1 (list (string "link_name")))))
-
+               (print (aref (aref df1 (& (< 20 df1.index)
+					;(< df1.index 120)
+				       (|\|| ,@ (loop for e in `(thinkcentre hp fujitsu medion) collect
+						     `(df1.link_name.str.contains (string ,e))))
+				       )) (list (string "link_name")))))
+	 (plt.hist (df1.index) :bins 100)
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_02_load" code))
