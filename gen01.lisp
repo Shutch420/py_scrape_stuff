@@ -142,59 +142,70 @@
 							   `(tuple (string ,(format nil "~a ~a" group-keyword d)) ,gen-id))))))))
 	  (setf res (list))
 	  (for ((ntuple idx (tuple keywords gen_id)) (enumerate intel_processors))
-	       (do0
-		(time.sleep 3)
-		(print (dot (string "searching for {} [{}/{}].")
-			    (format keywords idx (len intel_processors))))
-	    (setf url (gen_url :keywords keywords))
-	    (setf r (requests.get url)
-		  content (r.text.replace (string "&#8203") (string ""))
-		  soup (BeautifulSoup content (string "html.parser"))
-		  articles (soup.find_all (string "article")
-					  (dict ((string "class") (string "aditem")))))
-	    (if "articles is None"
+	       (try
 		(do0
-		 (logging.info (dot (string "No articles match {}.")
-				    (format keywords)))
+		 (time.sleep 3)
+		 (print (dot (string "searching for {} [{}/{}].")
+			     (format keywords idx (len intel_processors))))
+		 (setf url (gen_url :keywords keywords))
+		 (setf r (requests.get url)
+		       content (r.text.replace (string "&#8203") (string ""))
+		       soup (BeautifulSoup content (string "html.parser"))
+		       articles (soup.find_all (string "article")
+					       (dict ((string "class") (string "aditem")))))
+		 (if "articles is None"
+		     (do0
+		      (logging.info (dot (string "No articles match {}.")
+					 (format keywords)))
 					;(return None)
-		 ))
-	    (do0
-	     "# parse articles"
+		      ))
+		 (do0
+		  "# parse articles"
 	     
-	     (for (article articles)
-		  ,(let ((l `((details (article.find (string "div") (dict ((string "class")
-									   (string "aditem-details")))))
-			      (price (and details
-					  (dot (details.find (string "strong"))
-					       text)))
-			      (vb (and price
-				       (in (string "VB") price)))
-			      (header (article.find (string "h2")
-						    (dict ((string "class")
-							   (string "text-module-begin")))))
-			      (href (and header
-					 (aref (header.find (string "a")
-							    :href True)
-					       (string "href"))))
-			      (date (dot (article.find (string "div")
-						       (dict ((string "class")
-							      (string "aditem-addon"))))
-					 text
-					 (strip)))
-			      (ignore False)
-			      (timestamp (time.time))
-			      (content article)
-			      (search keywords)
-			      (generation gen_id))))
-		     `(do0
-		       ,@(loop for e in l collect
-			      (destructuring-bind (name code) e
-				`(setf ,name ,code)))
-		       (res.append (dict ,@(loop for e in l collect
-						(destructuring-bind (name code) e
-						  `((string ,name) ,name))))))))
-	     (setf df (pd.DataFrame res))
-	     (df.to_csv (string "output.csv"))))))
+		  (for (article articles)
+		       `(try
+			 (do0
+			  ,(let ((l `((details (article.find (string "div") (dict ((string "class")
+										   (string "aditem-details")))))
+				      (price (and details
+						  (dot (details.find (string "strong"))
+						       text)))
+				      (vb (and price
+					       (in (string "VB") price)))
+				      (header (article.find (string "h2")
+							    (dict ((string "class")
+								   (string "text-module-begin")))))
+				      (href (and header
+						 (aref (header.find (string "a")
+								    :href True)
+						       (string "href"))))
+				      (date (dot (article.find (string "div")
+							       (dict ((string "class")
+								      (string "aditem-addon"))))
+						 text
+						 (strip)))
+				      (ignore False)
+				      (timestamp (time.time))
+				      (content article)
+				      (search keywords)
+				      (generation gen_id))))
+			     `(do0
+			       ,@(loop for e in l collect
+				      (destructuring-bind (name code) e
+					`(setf ,name ,code)))
+			       (res.append (dict ,@(loop for e in l collect
+							(destructuring-bind (name code) e
+							  `((string ,name) ,name))))))))
+			 ("Exception as e"
+			  (print (dot (string "WARNING problem {} in article {}")
+				      (format e article)))
+			  pass)))
+		  (setf df (pd.DataFrame res))
+		  (df.to_csv (string "output.csv"))))
+		("Exception as e"
+		 (print (dot (string "WARNING problem {} in keyword {}")
+			     (format e keywords)))
+		 pass))))
 	 
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_01_scrape" code))
