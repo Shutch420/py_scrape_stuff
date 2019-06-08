@@ -3,7 +3,7 @@
 
 
 ;; from https://en.wikipedia.org/wiki/Haswell_(microarchitecture) (select 2 table rows in firefox with C-left mouse button)
-(defparameter *intel4*
+(defparameter *intel*
   `((4 haswell
        ((i7 "Core i7 Extreme" 	(5960X 5930K 5820K))
 	(i7 "Core i7" 	(4790K 4790 4790S 4790T 4785T 4771 4770K 4770 4770S 4770R 4770T 4770TE 4765T))
@@ -38,52 +38,53 @@
 	(xeon "Xeon E3 v4 "	(1285v4 1285Lv4 1265Lv4))
 	(xeon "Xeon E5 v4 "	(2699v4 2698v4 2697v4 2697Av4 2695v4 2690v4 2689v4 2687Wv4 2683v4 2680v4 2667v4 2660v4 2658v4 2650v4 2650Lv4 2648Lv4 2643v4 2640v4 2637v4 2630v4 2630Lv4 2628Lv4 2623v4 2620v4 2618Lv4 2609v4 2608Lv4 2603v4 1680v4 1660v4 1650v4 1630v4 1620v4 ))))
     (7 skylake
-       ((i7 "Core i7 "	6700K 6785R 6700 6700T)
-	(i5 "Core i5 "	6600K 6685R 6600 6585R 6500 6600T 6500T 6402P 6400T 6400)
-	(i3  "Core i3 "	6320 6300 6100 6300T 6100T 6098P)
-	(pentium "Pentium "	G4520 G4500 G4500T G4400 G4400T G4400TE)
-	(celeron "Celeron "	G3920 G3900 G3900TE G3900T)
-	(i9 "Core i9  "	7980XE 7960X 7940X 7920X 7900X)
-	(i7 "Core i7 "	7820X 7800X)
-	(i9 "Core i9  "	9980XE 9960X 9940X 9920X 9900X 9820X)
-	(i7 "Core i7 "	9800X)
-	(i7 "Core i7 "	6970HQ 6920HQ 6870HQ 6820HQ 6820HK 6770HQ 6700HQ 6660U 6650U 6600U 6567U 6560U 6500U)
-	(i5 "Core i5 "	6440HQ 6360U 6350HQ 6300HQ 6300U 6287U 6267U 6260U 6200U)
-	(i3 "Core i3 "	6167U 6157U 6100H 6100U 6006U)
-	(intel "Core m7 "	6Y75)
-	(intel "Core m5 "	6Y57 6Y54)
-	(intel "Core m3 "	6Y30)
-	(pentium "Pentium "	4405U 4405Y)
-	(celeron "Celeron "	G3902E G3900E 3955U 3855U)
-	(xeon "Xeon W "	2102 2104 2123 2125 2133 2135 2140B 2145 2150B 2155 2170B 2175 2191B 2195)
-	(xeon "Xeon E3 v5 "	1280v5 1275v5 1270v5 1260Lv5 1245v5 1240v5 1240Lv5 1230v5 1235Lv5 1225v5 1220v5 1575Mv5 1545Mv5 1535Mv5 1505Mv5 1505Lv5)
-	(xeon "Xeon Bronze"	3104 3106)
-	(xeon "Xeon Silver"	4108 4109T 4110 4112 4114 4114T 4116 4116T Xeon Gold   5115 5117 5117F 5118 5119T 5120 5120T 5122 6126 6126F 6126T 6128 6130 6130F 6130T 6132 6134 6134M 6136 6138 6138F 6138T 6140 6140M 6142 6142F 6142M 6144 6145 6146 6148 6148F 6149 6150 6152 6154 6161)
-	(xeon "Xeon Platinum"	8153 8156 8158 8160 8160F 8160M 8160T 8163 8164 8167M 8168 8170 8170M 8173M 8176 8176F 8176M 8180 8180M)))
+       ((i7 "Core i7 "	(6700K 6785R 6700 6700T))
+	(i5 "Core i5 "	(6600K 6685R 6600 6585R 6500 6600T 6500T 6402P 6400T 6400))
+	(i3  "Core i3 "	(6320 6300 6100 6300T 6100T 6098P))
+	(pentium "Pentium "	(G4520 G4500 G4500T G4400 G4400T G4400TE))
+	(celeron "Celeron "	(G3920 G3900 G3900TE G3900T))
+	(i9 "Core i9  "	(7980XE 7960X 7940X 7920X 7900X))
+	(i7 "Core i7 "	(7820X 7800X))
+	(i9 "Core i9  "	(9980XE 9960X 9940X 9920X 9900X 9820X))
+	(i7 "Core i7 "	(9800X))
+	(i7 "Core i7 "	(6970HQ 6920HQ 6870HQ 6820HQ 6820HK 6770HQ 6700HQ 6660U 6650U 6600U 6567U 6560U 6500U))
+	(i5 "Core i5 "	(6440HQ 6360U 6350HQ 6300HQ 6300U 6287U 6267U 6260U 6200U))
+	(i3 "Core i3 "	(6167U 6157U 6100H 6100U 6006U))
+	(intel "Core m7 "	(6Y75))
+	(intel "Core m5 "	(6Y57 6Y54))
+	(intel "Core m3 "	(6Y30))
+	(pentium "Pentium "	(4405U 4405Y))
+	(celeron "Celeron "	(G3902E G3900E 3955U 3855U))
+	(xeon "Xeon W "	(2102 2104 2123 2125 2133 2135 2140B 2145 2150B 2155 2170B 2175 2191B 2195))
+	(xeon "Xeon E3 v5 "	(1280v5 1275v5 1270v5 1260Lv5 1245v5 1240v5 1240Lv5 1230v5 1235Lv5 1225v5 1220v5 1575Mv5 1545Mv5 1535Mv5 1505Mv5 1505Lv5))
+	(xeon "Xeon Bronze"	(3104 3106))
+	(xeon "Xeon Silver"	(4108 4109T 4110 4112 4114 4114T 4116 4116T))
+	(xeon "Xeon Gold"   (5115 5117 5117F 5118 5119T 5120 5120T 5122 6126 6126F 6126T 6128 6130 6130F 6130T 6132 6134 6134M 6136 6138 6138F 6138T 6140 6140M 6142 6142F 6142M 6144 6145 6146 6148 6148F 6149 6150 6152 6154 6161))
+	(xeon "Xeon Platinum"	(8153 8156 8158 8160 8160F 8160M 8160T 8163 8164 8167M 8168 8170 8170M 8173M 8176 8176F 8176M 8180 8180M))))
     (8 kaby_lake
-       ((i7 "Core i7 "	7740X 7700K 7700 7700T)
-	(i5 "Core i5 "	7640X 7600K 7600 7600T 7500 7500T 7400 7400T)
-	(i3 "Core i3 "	7350K 7320 7300 7300T 7100 7100T 7101E 7101TE)
-	(pentium "Pentium "	G4620 G4600 G4600T G4560 G4560T)
-	(celeron "Celeron "	G3950 G3930 G3930T)
-	(i7 "Core i7 "	7920HQ 7820HQ 7820HK 7700HQ)
-	(i5 "Core i5 "	7440HQ 7300HQ)
-	(i3 "Core i3 "	7100H)
-	(i7 "Core i7 "	7660U 7600U 7567U 7560U 7500U 7Y75)
-	(i5 "Core i5 "	7360U 7300U 7287U 7267U 7260U 7200U 7Y57 7Y54)
-	(i3 "Core i3 "	7167U 7130U 7100U 7020U)
-	(intel "Core m3 "	7Y32 7Y30)
-	(pentium "Pentium "	4415U 4410Y)
-	(celeron "Celeron "	3965U 3865U 3965Y)
-	(xeon "Xeon E3 "	1285v6 1280v6 1275v6 1270v6 1245v6 1240v6 1230v6 1225v6 1220v6 1535Mv6 1505Mv6 1505Lv6)
-	(i3 "Core i3 "	8130U)
-	(i7 "Core i7 "	8650U 8550U)
-	(i5 "Core i5 "	8350U 8250U)
-	(i7 "Core i7 "	8809G 8709G 8706G 8705G)
-	(i5 "Core i5 "	8305G)
-	(i7 "Core i7 "	8510Y 8500Y)
-	(i5 "Core i5 "	8310Y 8210Y 8200Y)
-	(intel "Core m3 "	8100Y ))))))
+       ((i7 "Core i7 "	(7740X 7700K 7700 7700T))
+	(i5 "Core i5 "	(7640X 7600K 7600 7600T 7500 7500T 7400 7400T))
+	(i3 "Core i3 "	(7350K 7320 7300 7300T 7100 7100T 7101E 7101TE))
+	(pentium "Pentium "	(G4620 G4600 G4600T G4560 G4560T))
+	(celeron "Celeron "	(G3950 G3930 G3930T))
+	(i7 "Core i7 "	(7920HQ 7820HQ 7820HK 7700HQ))
+	(i5 "Core i5 "	(7440HQ 7300HQ))
+	(i3 "Core i3 "	(7100H))
+	(i7 "Core i7 "	(7660U 7600U 7567U 7560U 7500U 7Y75))
+	(i5 "Core i5 "	(7360U 7300U 7287U 7267U 7260U 7200U 7Y57 7Y54))
+	(i3 "Core i3 "	(7167U 7130U 7100U 7020U))
+	(intel "Core m3 "	(7Y32 7Y30))
+	(pentium "Pentium "	(4415U 4410Y))
+	(celeron "Celeron "	(3965U 3865U 3965Y))
+	(xeon "Xeon E3 "	(1285v6 1280v6 1275v6 1270v6 1245v6 1240v6 1230v6 1225v6 1220v6 1535Mv6 1505Mv6 1505Lv6))
+	(i3 "Core i3 "	(8130U))
+	(i7 "Core i7 "	(8650U 8550U))
+	(i5 "Core i5 "	(8350U 8250U))
+	(i7 "Core i7 "	(8809G 8709G 8706G 8705G))
+	(i5 "Core i5 "	(8305G))
+	(i7 "Core i7 "	(8510Y 8500Y))
+	(i5 "Core i5 "	(8310Y 8210Y 8200Y))
+	(intel "Core m3 "	(8100Y) ))))))
 
 (in-package :cl-py-generator)
 (let ((code
@@ -133,53 +134,67 @@
 	  (setf url (gen_url :keywords (string "vega 56")
 			     :maxPrice (string "350")
 			     :minPrice (string "120")))
-	  (setf url (gen_url :keywords (string "vega 56")))
-	  (setf r (requests.get url)
-		content (r.text.replace (string "&#8203") (string ""))
-		soup (BeautifulSoup content (string "html.parser"))
-		articles (soup.find_all (string "article")
-					(dict ((string "class") (string "aditem")))))
-	  (if "articles is None"
-	      (do0
-	       (logging.info (string "No articles match."))
-					;(return None)
-	       )))
-	 (do0
-	  "# parse articles"
+	  (setf intel_processors (list ,@(loop for e in *intel* appending
+					      (destructuring-bind (gen-id gen-name devices) e
+					       (loop for dev in devices appending
+						    (destructuring-bind (group-keyword group-name device-ids) dev
+						      (loop for d in device-ids collect
+							   `(tuple (string ,(format nil "~a ~a" group-keyword d)) ,gen-id))))))))
 	  (setf res (list))
-	  (for (article articles)
-	       ,(let ((l `((details (article.find (string "div") (dict ((string "class")
-								     (string "aditem-details")))))
-			    (price (and details
-					(dot (details.find (string "strong"))
-					 text)))
-			    (vb (and price
-				     (in (string "VB") price)))
-			    (header (article.find (string "h2")
-					  (dict ((string "class")
-						 (string "text-module-begin")))))
-			    (href (and header
-				       (aref (header.find (string "a")
-						      :href True)
-					     (string "href"))))
-			   (date (dot (article.find (string "div")
+	  (for ((ntuple idx (tuple keywords gen_id)) (enumerate intel_processors))
+	       (do0
+		(time.sleep 3)
+		(print (dot (string "searching for {} [{}/{}].")
+			    (format keywords idx (len intel_processors))))
+	    (setf url (gen_url :keywords keywords))
+	    (setf r (requests.get url)
+		  content (r.text.replace (string "&#8203") (string ""))
+		  soup (BeautifulSoup content (string "html.parser"))
+		  articles (soup.find_all (string "article")
+					  (dict ((string "class") (string "aditem")))))
+	    (if "articles is None"
+		(do0
+		 (logging.info (dot (string "No articles match {}.")
+				    (format keywords)))
+					;(return None)
+		 ))
+	    (do0
+	     "# parse articles"
+	     
+	     (for (article articles)
+		  ,(let ((l `((details (article.find (string "div") (dict ((string "class")
+									   (string "aditem-details")))))
+			      (price (and details
+					  (dot (details.find (string "strong"))
+					       text)))
+			      (vb (and price
+				       (in (string "VB") price)))
+			      (header (article.find (string "h2")
 						    (dict ((string "class")
-							   (string "aditem-addon"))))
-				      text
-				      (strip)))
-			   (ignore False)
-			   (timestamp (time.time))
-			   (content article)
-			   (search_url url))))
-		   `(do0
-		     ,@(loop for e in l collect
-			    (destructuring-bind (name code) e
-			      `(setf ,name ,code)))
-		     (res.append (dict ,@(loop for e in l collect
-					      (destructuring-bind (name code) e
-					       `((string ,name) ,name))))))))
-	  (setf df (pd.DataFrame res))
-	  (df.to_csv (string "output.csv")))
+							   (string "text-module-begin")))))
+			      (href (and header
+					 (aref (header.find (string "a")
+							    :href True)
+					       (string "href"))))
+			      (date (dot (article.find (string "div")
+						       (dict ((string "class")
+							      (string "aditem-addon"))))
+					 text
+					 (strip)))
+			      (ignore False)
+			      (timestamp (time.time))
+			      (content article)
+			      (search keywords)
+			      (generation gen_id))))
+		     `(do0
+		       ,@(loop for e in l collect
+			      (destructuring-bind (name code) e
+				`(setf ,name ,code)))
+		       (res.append (dict ,@(loop for e in l collect
+						(destructuring-bind (name code) e
+						  `((string ,name) ,name))))))))
+	     (setf df (pd.DataFrame res))
+	     (df.to_csv (string "output.csv"))))))
 	 
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_01_scrape" code))
