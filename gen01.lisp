@@ -150,10 +150,10 @@
 		 
 		 
 		 (setf url (gen_url :keywords keywords
-				    :categoryId 228  ;; PCs
-				    :radius 30 ;; km
+				    :categoryId (string "228")  ;; PCs
+				    :radius (string "30") ;; km
 				    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
-				    :locationId 1139
+				    :locationId (string "1139")
 				    ))
 		 (setf r (requests.get url)
 		       content (r.text.replace (string "&#8203") (string ""))

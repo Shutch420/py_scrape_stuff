@@ -17,7 +17,7 @@ for idx, (keywords,gen_id,) in enumerate(intel_processors):
     try:
         time.sleep(3)
         print("searching for {} [{}/{}].".format(keywords, idx, len(intel_processors)))
-        url=gen_url(keywords=keywords, categoryId=228, radius=30, locationStr="Kempen+-+Nordrhein-Westfalen", locationId=1139)
+        url=gen_url(keywords=keywords, categoryId="228", radius="30", locationStr="Kempen+-+Nordrhein-Westfalen", locationId="1139")
         r=requests.get(url)
         content=r.text.replace("&#8203", "")
         soup=BeautifulSoup(content, "html.parser")

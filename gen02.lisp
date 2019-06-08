@@ -36,7 +36,7 @@
 				(join
 				 (dot (aref row (string "href"))
 				      (aref (split (string "/"))
-					    "2:")
+					    "2:-1")
 				      ))
 				))
 			 :axis 1))
@@ -58,7 +58,8 @@
 					      `(df1.link_name.str.contains (string ,e))))
 				)))
 	 (with (pd.option_context (string "display.max_rows") None
-                                  (string "display.max_columns") None)
+                                  (string "display.max_columns") None
+				  (string "display.max_colwidth") 1000)
                (print (aref df2 (list (string "link_name")
 				      (string "generation")))))
 	 (plt.hist (dot (aref df1 (< 0 df1.index))
