@@ -21,4 +21,6 @@ amd=((df1.link_name.str.contains("hd")) | (df1.link_name.str.contains("amd")) | 
 df2=df1[((((20)<(df1.index))) & (((df1.index)<(220))) & (~laptop) & (((df1.link_name.str.contains("thinkcentre")) | (df1.link_name.str.contains("lenovo")) | (df1.link_name.str.contains("hp")) | (df1.link_name.str.contains("fujitsu")) | (df1.link_name.str.contains("medion")) | (df1.link_name.str.contains("dell")) | (df1.link_name.str.contains("optiplex")) | (df1.link_name.str.contains("prodesk")) | (df1.link_name.str.contains("esprimo")))))]
 with pd.option_context("display.max_rows", None, "display.max_columns", None):
     print(df2[["link_name", "generation"]])
-plt.hist(df1.index, bins=100)
+plt.hist(df1[((0)<(df1.index))].index, bins=120)
+plt.hist(df1[((((0)<(df1.index))) & (~laptop))].index, bins=120)
+plt.grid()

@@ -147,7 +147,14 @@
 		 (time.sleep 3)
 		 (print (dot (string "searching for {} [{}/{}].")
 			     (format keywords idx (len intel_processors))))
-		 (setf url (gen_url :keywords keywords))
+		 
+		 
+		 (setf url (gen_url :keywords keywords
+				    :categoryId 228  ;; PCs
+				    :radius 30 ;; km
+				    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
+				    :locationId 1139
+				    ))
 		 (setf r (requests.get url)
 		       content (r.text.replace (string "&#8203") (string ""))
 		       soup (BeautifulSoup content (string "html.parser"))
@@ -201,7 +208,7 @@
 				      (format e article)))
 			  pass)))
 		  (setf df (pd.DataFrame res))
-		  (df.to_csv (string "output.csv"))))
+		  (df.to_csv (string "output_kempen_pc.csv"))))
 		("Exception as e"
 		 (print (dot (string "WARNING problem {} in keyword {}")
 			     (format e keywords)))
