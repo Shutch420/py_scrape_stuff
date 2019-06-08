@@ -25,6 +25,6 @@ for mfgr in ["NVIDIA", "AMD"]:
         head=table.find("thead", {("class"):("colheader")})
         columns=list(map(lambda x: x.text.strip(), head.find_all("th")))
         rows=table.find_all("tr")
-        data=((data)+(list(map(lambda row: dict((([("time",time.time(),), ("mfgr",mfgr,), ("year",year,)])+(list(zip(columns, map(lambda td: td.text.strip(), row.find_all("td"))))))), rows[2:]))))
+        data=((data)+(list(map(lambda row: dict((([("time",time.time(),), ("mfgr",mfgr,), ("year",year,), ("url",row.find("td", {("class"):((("vendor-")+(mfgr)))}).a["href"],)])+(list(zip(columns, map(lambda td: td.text.strip(), row.find_all("td"))))))), rows[2:]))))
         df=pd.DataFrame(data)
-        df.to_csv("techpowerup_gpu.csv")
+        df.to_csv("techpowerup_gpu_b.csv")

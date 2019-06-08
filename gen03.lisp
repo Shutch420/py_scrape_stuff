@@ -58,7 +58,17 @@
 		      data (+ data ("list" (map (lambda (row)
 						  ("dict" (+ (list (tuple (string "time") (time.time))
 								   (tuple (string "mfgr") mfgr)
-								   (tuple (string "year") year))
+								   (tuple (string "year") year)
+								   (tuple (string "url") ;;(rows[12].find('td',{"class":"vendor-NVIDIA"})).a['href']
+
+									  (dot
+									   row
+									   (find (string "td")
+										 (dict ((string "class")
+											(+ (string "vendor-") mfgr))))
+									   (aref a #+nil (find (string "a")
+										       :href True)
+										 (string "href")))))
 							     ("list"
 							      (zip
 							     columns
@@ -70,7 +80,7 @@
 					;data1 (functools.reduce operator.iconcat data (list))
 		      df (pd.DataFrame data)
 		      )
-		(df.to_csv (string "techpowerup_gpu.csv"))
+		(df.to_csv (string "techpowerup_gpu_b.csv"))
 		)))
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_03_scrape_techpowerup" code))
