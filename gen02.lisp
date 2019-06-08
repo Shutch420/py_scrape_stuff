@@ -62,21 +62,40 @@
 				~older_than_haskell
 				#+nil (|\|| nvidia
 					    amd)
-				;(df1.link_name.str.contains (string "i5"))
+				
 				desktop
-				)))
-	 (with (pd.option_context (string "display.max_rows") None
-                                  (string "display.max_columns") None
+				))
+	       
+	       )
+	 ,@(loop for e in `(xeon i5 i7 i3) collect
+		 `(setf ,(format nil "df2_~a" e) (aref df2 (df2.link_name.str.contains (string ,e)))))
+	    
+	    (def tbl (df2)
+	     (with (pd.option_context (string "display.max_rows") None
+                                      (string "display.max_columns") None
 
-				  (string "display.max_colwidth") 1000
-				  (string "display.width") 1000)
-               (print (aref df2 (list (string "link_name")
-				      (string "gen_id")))))
-	 (plt.hist (dot (aref df1 (< 0 df1.index))
-			index) :bins 120)
-	 (plt.hist (dot (aref df1 (& (< 0 df1.index)
-				     ~laptop))
-			index) :bins 120)
+				      (string "display.max_colwidth") 1000
+				      (string "display.width") 1000)
+		   (print (aref df2 (list (string "link_name")
+					  (string "gen_id")
+					  (string "group_keyword")
+					  (string "device_id"))))))
+	    (tbl df2)
+
+	    ,@(loop for e in `(xeon i5 i7 i3) collect
+		   `(plt.hist (dot (aref ,(format nil "df2_~a" e)
+					 (< 0 (dot ,(format nil "df2_~a" e)
+						   index)))
+				   index)
+			      :bins 120
+			      :label (string ,e)))
+	#+nil (do0 (plt.hist (dot (aref df1 (< 0 df1.index))
+			    index) :bins 120)
+	     
+	     (plt.hist (dot (aref df1 (& (< 0 df1.index)
+					 ~laptop))
+			    index) :bins 120))
+	(plt.legend)
 	 (plt.grid)
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_02_load" code))

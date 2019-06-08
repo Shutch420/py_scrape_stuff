@@ -154,9 +154,9 @@
 		 
 		 (setf url (gen_url :keywords keywords
 				    :categoryId (string "228")  ;; PCs
-				    :radius (string "30") ;; km
-				    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
-				    :locationId (string "1139")
+				    ;:radius (string "30") ;; km
+				    ;:locationStr (string "Kempen+-+Nordrhein-Westfalen")
+				    ;:locationId (string "1139")
 				    ))
 		 (setf r (requests.get url)
 		       content (r.text.replace (string "&#8203") (string ""))
@@ -215,7 +215,7 @@
 				      (format e article)))
 			  pass)))
 		  (setf df (pd.DataFrame res))
-		  (df.to_csv (string "output_kempen_pc.csv"))))
+		  (df.to_csv (string "output_germany_pc.csv"))))
 		("Exception as e"
 		 (print (dot (string "WARNING problem {} in keyword {}")
 			     (format e keywords)))

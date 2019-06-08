@@ -22,8 +22,17 @@ cpu=((df1.link_name.str.contains("processor")) | (df1.link_name.str.contains("pr
 desktop=((df1.link_name.str.contains("thinkcentre")) | (df1.link_name.str.contains("lenovo")) | (df1.link_name.str.contains("hp")) | (df1.link_name.str.contains("fujitsu")) | (df1.link_name.str.contains("medion")) | (df1.link_name.str.contains("dell")) | (df1.link_name.str.contains("optiplex")) | (df1.link_name.str.contains("prodesk")) | (df1.link_name.str.contains("esprimo")) | (df1.link_name.str.contains("workstation")) | (df1.link_name.str.contains("elitedesk")))
 older_than_haskell=((df1.link_name.str.contains("i3-2")) | (df1.link_name.str.contains("i3-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")) | (df1.link_name.str.contains("i5-2")) | (df1.link_name.str.contains("i5-3")))
 df2=df1[((((20)<(df1.index))) & (~laptop) & (~cpu) & (~older_than_haskell) & (desktop))]
-with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.max_colwidth", 1000, "display.width", 1000):
-    print(df2[["link_name", "gen_id"]])
-plt.hist(df1[((0)<(df1.index))].index, bins=120)
-plt.hist(df1[((((0)<(df1.index))) & (~laptop))].index, bins=120)
+df2_xeon=df2[df2.link_name.str.contains("xeon")]
+df2_i5=df2[df2.link_name.str.contains("i5")]
+df2_i7=df2[df2.link_name.str.contains("i7")]
+df2_i3=df2[df2.link_name.str.contains("i3")]
+def tbl(df2):
+    with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.max_colwidth", 1000, "display.width", 1000):
+        print(df2[["link_name", "gen_id", "group_keyword", "device_id"]])
+tbl(df2)
+plt.hist(df2_xeon[((0)<(df2_xeon.index))].index, bins=120, label="xeon")
+plt.hist(df2_i5[((0)<(df2_i5.index))].index, bins=120, label="i5")
+plt.hist(df2_i7[((0)<(df2_i7.index))].index, bins=120, label="i7")
+plt.hist(df2_i3[((0)<(df2_i3.index))].index, bins=120, label="i3")
+plt.legend()
 plt.grid()
