@@ -34,8 +34,25 @@
 			   ))))
 	    ("Exception as e"
 	     (return 0d0))))
+
+	 (def parse_distance (row)
+	   (try
+	    (do0
+	     (setf soup (BeautifulSoup (aref row (string content)) (string "html.parser"))
+		   details (soup.find (string "div") (dict ((string "class")
+							    (string "aditem-details"))))
+		   distance (float (dot (aref (details.text.split (string "\\n")) -1) ;; last line
+					(strip)
+					(aref (split (string " ")) 0) ;; cut km away
+					)))
+	     (return distance))
+	    ("Exception as e"
+	     (return -1d0))))
+	 
 	 (setf (aref df (string "price_eur"))
 	       (df.apply parse_price :axis 1)
+	       (aref df (string "distance_km"))
+	       (df.apply parse_distance :axis 1)
 	       (aref df (string "link_name"))
 	       (df.apply (lambda (row)
 			   (dot (string "/")
@@ -74,9 +91,6 @@
 	       
 	       )
 	 
-	 (setf soup (BeautifulSoup (dot (aref df2.iloc 10) content) (string "html.parser"))
-	       details (soup.find (string "div") (dict ((string "class")
-							(string "aditem-details")))))
 	 ;; float(details.text.split('\n')[-1].strip().split(' ')[0])
 	 #+nil
 	 ,@(loop for e in `(xeon i5 i7 i3) collect
@@ -91,7 +105,8 @@
 		   (print (aref df2 (list (string "link_name")
 					  (string "gen_id")
 					  (string "group_keyword")
-					  (string "device_id"))))))
+					  (string "device_id")
+					  (string "distance_km"))))))
 	    (tbl df2)
 
 	    ,@(loop for e in `(xeon i5 i7 i3) collect
