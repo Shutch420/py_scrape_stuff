@@ -47,19 +47,29 @@
 	       nvidia (|\|| ,@ (loop for e in `(gtx nvidia) collect
 				    `(df1.link_name.str.contains (string ,e))))
 	       amd (|\|| ,@ (loop for e in `(hd amd radeon) collect
-				    `(df1.link_name.str.contains (string ,e))))
+				 `(df1.link_name.str.contains (string ,e))))
+	       cpu (|\|| ,@ (loop for e in `(processor prozessor) collect
+				 `(df1.link_name.str.contains (string ,e))))
+	       desktop (|\|| ,@ (loop for e in `(thinkcentre lenovo hp fujitsu medion dell optiplex prodesk esprimo workstation elitedesk) collect
+				     `(df1.link_name.str.contains (string ,e))))
+	       older_than_haskell (|\|| ,@ (loop for e in `(i3-2 i3-3 i5-2 i5-3 i5-2 i5-3) collect
+				     `(df1.link_name.str.contains (string ,e))))
 	       df2 (aref df1 (& (< 20 df1.index)
-				(< df1.index 220)
+				;(< df1.index 220)
 					;(< 4 df1.generation)
 				~laptop
+				~cpu
+				~older_than_haskell
 				#+nil (|\|| nvidia
-				      amd)
-				(|\|| ,@ (loop for e in `(thinkcentre lenovo hp fujitsu medion dell optiplex prodesk esprimo) collect
-					      `(df1.link_name.str.contains (string ,e))))
+					    amd)
+				;(df1.link_name.str.contains (string "i5"))
+				desktop
 				)))
 	 (with (pd.option_context (string "display.max_rows") None
                                   (string "display.max_columns") None
-				  (string "display.max_colwidth") 1000)
+
+				  (string "display.max_colwidth") 1000
+				  (string "display.width") 1000)
                (print (aref df2 (list (string "link_name")
 				      (string "generation")))))
 	 (plt.hist (dot (aref df1 (< 0 df1.index))
