@@ -139,9 +139,12 @@
 					       (loop for dev in devices appending
 						    (destructuring-bind (group-keyword group-name device-ids) dev
 						      (loop for d in device-ids collect
-							   `(tuple (string ,(format nil "~a ~a" group-keyword d)) ,gen-id))))))))
+							   `(tuple (string ,(format nil "~a ~a" group-keyword d))
+								   (string ,gen-id)
+								   (string ,group-keyword)
+								   (string ,d)))))))))
 	  (setf res (list))
-	  (for ((ntuple idx (tuple keywords gen_id)) (enumerate intel_processors))
+	  (for ((ntuple idx (tuple keywords gen_id group_keyword device_id)) (enumerate intel_processors))
 	       (try
 		(do0
 		 (time.sleep 3)
@@ -195,13 +198,17 @@
 				      (timestamp (time.time))
 				      (content article)
 				      (search keywords)
-				      (generation gen_id))))
+				      (group_keyword)
+				      (device_id)
+				      (gen_id))))
 			     `(do0
 			       ,@(loop for e in l collect
-				      (destructuring-bind (name code) e
-					`(setf ,name ,code)))
+				      (destructuring-bind (name &optional code) e
+					(if code
+					    `(setf ,name ,code)
+					    "# no code")))
 			       (res.append (dict ,@(loop for e in l collect
-							(destructuring-bind (name code) e
+							(destructuring-bind (name &optional code) e
 							  `((string ,name) ,name))))))))
 			 ("Exception as e"
 			  (print (dot (string "WARNING problem {} in article {}")
