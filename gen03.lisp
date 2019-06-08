@@ -23,7 +23,7 @@
 		     
 		     )))
 
-	    `(def gen_url (&key (database (string "gpu-spec")) ;; or cpudb
+	    `(def gen_url (&key (database (string "gpu-specs")) ;; or cpudb
 				,@(loop for e in l collect
 					(destructuring-bind (name &optional value) e
 					  (if value
@@ -41,13 +41,13 @@
 	       ))
 	 
 	 
-	 (for (database (list (string "cpudb")
-			      (string "gpu-spec")))
+	 (for (database (list ;(string "cpudb")
+			      (string "gpu-specs")))
 	      (setf data (list))
 	      (if (== database (string "cpudb"))
 		  (setf mfgrs (list (string "Intel")
 				    (string "AMD")))
-		  (if (== database (string "gpu-spec"))
+		  (if (== database (string "gpu-specs"))
 		   (setf mfgrs (list (string "NVIDIA")
 				     (string "AMD")))))
 	      (for (mfgr mfgrs)
@@ -73,7 +73,7 @@
 									(tuple (string "year") year)
 									(tuple (string "url") ;;(rows[12].find('td',{"class":"vendor-NVIDIA"})).a['href']
 
-									       (or (and (== database (string "gpu-spec"))
+									       (or (and (== database (string "gpu-specs"))
 											(dot (row.find (string "td")
 												   (dict ((string "class")
 													  (+ (string "vendor-") mfgr))))
