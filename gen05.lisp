@@ -106,7 +106,7 @@
 	   (setf str (aref row column))
 	   (try
 	    (return (pd.to_datetime str))
-	    ("Exception as e"
+	    ("Exception as e" 
 	     (return np.nan))))
 	 
 	 ,(let ((l `((tflops16 "Theoretical Performance FP16 (half) performance")
