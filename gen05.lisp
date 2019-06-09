@@ -7,7 +7,9 @@
 (let ((code
        `(do0
 	 (imports (sys
-		   (pd pandas)
+		   (np numpy)
+		   (pd
+		    pandas)
 		   pathlib
 		   html
 		   json
@@ -62,9 +64,23 @@
 		     )))
 	   `(do0
 	     ,@(loop for e in l collect
-		    `(print (dot (string ,(format nil "~a: {}" e))
-				 (format (dot (aref df (string ,e))
-				       (aref iloc 1203))))))))
+		    `(do0
+		      (setf entry (dot (aref df (string ,e))
+				       (aref iloc 1203)
+				       )
+			    )
+		      (if (pd.isnull entry)
+			  (setf value entry
+				unit (string ""))
+			  (setf
+			   entry_stripped (entry.strip)
+			   entry_parts (entry_stripped.split (string " "))
+			   value (float (dot (aref entry_parts 0)
+				       (replace (string ",") (string ""))))
+			   unit (aref entry_parts -1)))
+		      (print (dot (string ,(format nil "~a: '{}' : value={} unit={}" e))
+				  (format entry value unit
+					  )))))))
 	 
 	 #+nil
 	 (do0
