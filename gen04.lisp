@@ -24,8 +24,8 @@
 	 ;(setf row (aref df.iloc -1))
 	 (setf res (list))
 	 (for ((ntuple idx row)
-	       #+nil (df.iterrows)
-	       #-nil(list ;(tuple 0 (aref df.iloc -1))
+	       #-nil (df.iterrows)
+	       #+nil(list ;(tuple 0 (aref df.iloc -1))
 			  (tuple 1 (aref df.iloc 347))))
 	  (do0
 	   (setf url (+ (string "https://www.techpowerup.com") row.url))

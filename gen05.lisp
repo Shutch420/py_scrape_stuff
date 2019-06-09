@@ -6,6 +6,11 @@
 (in-package :cl-py-generator)
 (let ((code
        `(do0
+	 #-nil(do0
+                          (imports (matplotlib))
+                                        ;(matplotlib.use (string "Agg"))
+                          (imports ((plt matplotlib.pyplot)))
+                          (plt.ion))
 	 (imports (sys
 		   (np numpy)
 		   (pd
@@ -47,7 +52,8 @@
 					     `(urllib.parse.quote ,name))))))
 	       ))
 
-	 (setf df (pd.read_csv (string "techpowerup_gpu-specs_details_1560084187.csv"
+	 (setf df (pd.read_csv (string ;"techpowerup_gpu-specs_details_1560084187.csv"
+				       "techpowerup_gpu-specs_details_1560089059.csv"
 				       ;"techpowerup_gpu-specs_details.csv"
 				       )))
 
@@ -70,7 +76,8 @@
 				     (replace (string ",") (string "")))
 		   value (or
 			  (and (== value_string (string "System"))
-			       -1d0)
+			       np.nan ; -1d0
+			       )
 			  (float value_string))
 		   unit (dot (string " ")
 			     (join (aref entry_parts "1:"))))
@@ -89,10 +96,18 @@
 	    ("Exception as e"
 	     (print (dot (string "warn {}")
 			 (format e)))
-	     (return -2d0)))
+	     (return np.nan ;-2d0
+		     )))
 	   (if value_p
 	       (return value)
 	       (return unit)))
+
+	 (def parse_date (row &key column value_p)
+	   (setf str (aref row column))
+	   (try
+	    (return (pd.to_datetime str))
+	    ("Exception as e"
+	     (return np.nan))))
 	 
 	 ,(let ((l `((tflops16 "Theoretical Performance FP16 (half) performance")
 		     (tflops32 "Theoretical Performance FP32 (float) performance")
@@ -104,22 +119,24 @@
 		     (mem_bandwidth "Memory Bandwidth")
 		     (die_size "Graphics Processor Die Size") 
 		     (tdp "Board Design TDP")
-		     ;"Graphics Card Release Date"
+		     (release_date "Graphics Card Release Date" :parser parse_date :unit nil)
 		     (launch_price "Graphics Card Launch Price")
 		     (process_size "Graphics Processor Process Size")
 		     )))
 	   `(do0
 	     ,@(loop for e in l collect
-		    (destructuring-bind (name colname) e
+		    (destructuring-bind (name colname &key (parser 'parse_entry) (unit t)) e
 		      `(do0
 			(setf (aref df (string ,name))
-			      (df.apply (lambda (row) (parse_entry row
+			      (df.apply (lambda (row) (,parser row
 								   :column (string ,colname) :value_p True))
 					:axis 1))
-			(setf (aref df (string ,(format nil "~a_unit" name)))
-			      (df.apply (lambda (row) (parse_entry row
-								   :column (string ,colname) :value_p False))
-					:axis 1))
+			,(if unit
+			     `(setf (aref df (string ,(format nil "~a_unit" name)))
+			       (df.apply (lambda (row) (,parser row
+								:column (string ,colname) :value_p False))
+					 :axis 1))
+			     "# no unit")
 		       #+nil
 		       (print (dot (string ,(format nil "~a:  : value={} unit={}" name))
 				   (format 
