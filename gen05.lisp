@@ -72,7 +72,8 @@
 
 			    ,@(let ((l `((GFLOPS TFLOPS 1000)
 					(MPixel GPixel 1000)
-					(MTexel MPixel 1000))))
+					 (MTexel GTexel 1000)
+					 (MVertices GVertices 1000))))
 				(loop for e in l collect
 				     (destructuring-bind (small big factor) e
 				      `(if (in (string ,small) unit)
@@ -89,6 +90,7 @@
 		     (tflops64 "Theoretical Performance FP64 (double) performance")
 		     (pixel_rate "Theoretical Performance Pixel Rate")
 		     (tex_rate "Theoretical Performance Texture Rate")
+		     (vertex_rate "Theoretical Performance Vertex Rate")
 		     (transistors "Graphics Processor Transistors")
 		     (mem_bandwidth "Memory Bandwidth")
 		     (die_size "Graphics Processor Die Size")

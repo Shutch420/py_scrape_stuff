@@ -30,7 +30,10 @@ def parse_entry(row, column=None, value_p=None):
             unit=unit.replace("MPixel", "GPixel")
             value=((value)/(1000))
         if ( ("MTexel" in unit) ):
-            unit=unit.replace("MTexel", "MPixel")
+            unit=unit.replace("MTexel", "GTexel")
+            value=((value)/(1000))
+        if ( ("MVertices" in unit) ):
+            unit=unit.replace("MVertices", "GVertices")
             value=((value)/(1000))
     if ( value_p ):
         return value
@@ -46,6 +49,8 @@ df["pixel_rate"]=df.apply(lambda row: parse_entry(row, column="Theoretical Perfo
 df["pixel_rate_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Pixel Rate", value_p=False), axis=1)
 df["tex_rate"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Texture Rate", value_p=True), axis=1)
 df["tex_rate_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Texture Rate", value_p=False), axis=1)
+df["vertex_rate"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Vertex Rate", value_p=True), axis=1)
+df["vertex_rate_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Vertex Rate", value_p=False), axis=1)
 df["transistors"]=df.apply(lambda row: parse_entry(row, column="Graphics Processor Transistors", value_p=True), axis=1)
 df["transistors_unit"]=df.apply(lambda row: parse_entry(row, column="Graphics Processor Transistors", value_p=False), axis=1)
 df["mem_bandwidth"]=df.apply(lambda row: parse_entry(row, column="Memory Bandwidth", value_p=True), axis=1)
