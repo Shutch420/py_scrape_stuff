@@ -41,26 +41,30 @@
 						    (list (string "details"))))))
 		 
 		 
-		 detail_list_ (+
-			      (list (tuple (string url) row.url)
-				    (tuple (string time) (time.time)))
-			      (functools.reduce operator.iconcat 
-			       ("list"
-				(map (lambda (section) ("list" (map (lambda (row)
-								      
-								      (tuple (+ (dot (section.find (string "h2"))
-										     text
-										     (strip))
-										(string " ")
-										(row.dt.text.strip)) (row.dd.text.strip)))
-								    (or
-								     (and (section.find (string "div"))
-									  (dot (section.find (string "div"))
-									       (find_all (string "dl"))))
-								     (list)))))
-				     sections))
-			       (list))))
+					;detail_list_
+		 #+nil
+		 (+
+		  (list (tuple (string url) row.url)
+			(tuple (string time) (time.time)))
+		  (functools.reduce operator.iconcat 
+				    ("list"
+				     (map (lambda (section) ("list"
+							     (map (lambda (row)
+								    (tuple (+ (dot (section.find (string "h2"))
+										   text
+										   (strip))
+									      (string " ")
+									      (row.dt.text.strip)) (row.dd.text.strip)))
+								  
+								  (or
+								   (and (section.find (string "div"))
+									(dot (section.find (string "div"))
+									     (find_all (string "dl"))))
+								   (list)))))
+					  sections))
+				    (list))))
 	   (do0
+	    ;; find column names
 	    (setf columns (list))
 	    (for (section sections)
 		 (setf col_orig (section.h2.text.strip)
@@ -71,7 +75,25 @@
 		   (setf col (+ col_orig (string "_") (str count))
 			 count (+ 1 count)))
 		 (columns.append col)))
-	   (print columns)
+
+	   (do0
+	    ;; read values and create dict with name : value
+	    (setf dres (dict ((string url) row.url)
+			     ((string scrape_timestamp) (time.time))))
+	    (try
+	     (for (section sections)
+		  (if section.div
+		      (for ((ntuple col_name line) (zip columns (section.div.find_all (string "dl"))))
+			   (setf (aref dres (+ col_name (string " ") (line.dt.text.strip)))
+				 (line.dd.text.strip)))))
+	     ("Exception as e"
+	      (print (dot (string "warn {}")
+			  (format e)))
+	      pass))
+	    (res.append dres)
+	    )
+	   
+	   ;(print columns)
 	   #+nil (res.append ("dict" detail_list))
 	   (setf df_out (pd.DataFrame res))
 	   (df_out.to_csv (dot (string "techpowerup_gpu-specs_details_{}.csv")

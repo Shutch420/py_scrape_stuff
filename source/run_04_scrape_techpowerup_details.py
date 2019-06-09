@@ -21,7 +21,6 @@ for idx, row in [(1,df.iloc[347],)]:
     content=r.text.replace("&#8203", "")
     soup=BeautifulSoup(content, "html.parser")
     sections=soup.find_all(lambda tag: ((((tag.name)==("section"))) and (((tag.get("class"))==(["details"])))))
-    detail_list_=(([("url",row.url,), ("time",time.time(),)])+(functools.reduce(operator.iconcat, list(map(lambda section: list(map(lambda row: (((section.find("h2").text.strip())+(" ")+(row.dt.text.strip())),row.dd.text.strip(),), ((((section.find("div")) and (section.find("div").find_all("dl")))) or ([])))), sections)), [])))
     columns=[]
     for section in sections:
         col_orig=section.h2.text.strip()
@@ -31,6 +30,15 @@ for idx, row in [(1,df.iloc[347],)]:
             col=((col_orig)+("_")+(str(count)))
             count=((1)+(count))
         columns.append(col)
-    print(columns)
+    dres={("url"):(row.url),("scrape_timestamp"):(time.time())}
+    try:
+        for section in sections:
+            if ( section.div ):
+                for col_name, line in zip(columns, section.div.find_all("dl")):
+                    dres[((col_name)+(" ")+(line.dt.text.strip()))]=line.dd.text.strip()
+    except Exception as e:
+        print("warn {}".format(e))
+        pass
+    res.append(dres)
     df_out=pd.DataFrame(res)
     df_out.to_csv("techpowerup_gpu-specs_details_{}.csv".format(int(time.time())))
