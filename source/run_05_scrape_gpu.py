@@ -11,10 +11,13 @@ import logging
 import requests
 import urllib
 import time
+import fuzzywuzzy
+import fuzzywuzzy.process
 from bs4 import BeautifulSoup
+# pip3 install --user fuzzywuzzy
 def gen_url(keywords="", categoryId="225", locationStr="", locationId="", radius="", sortingField="SORTING_DATE", adType="", posterType="", pageNum="1", action="find", maxPrice="", minPrice="", extra=""):
     return (("https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?&keywords={}&categoryId={}&locationStr={}&locationId={}&radius={}&sortingField={}&adType={}&posterType={}&pageNum={}&action={}&maxPrice={}&minPrice={}")+(extra)).format(urllib.parse.quote(keywords), urllib.parse.quote(categoryId), urllib.parse.quote(locationStr), urllib.parse.quote(locationId), urllib.parse.quote(radius), urllib.parse.quote(sortingField), urllib.parse.quote(adType), urllib.parse.quote(posterType), urllib.parse.quote(pageNum), urllib.parse.quote(action), urllib.parse.quote(maxPrice), urllib.parse.quote(minPrice))
-df=pd.read_csv("techpowerup_gpu-specs_details_1560089059.csv")
+df=pd.read_csv("techpowerup_gpu-specs_details_1560095490.csv")
 def parse_entry(row, column=None, value_p=None):
     try:
         entry=row[column]
@@ -105,3 +108,7 @@ for article in articles:
         pass
 df_articles=pd.DataFrame(res)
 df_articles.to_csv("output_germany_gpu_distance_to_kempen.csv")
+card_names=list(df.stage0_url.apply(lambda x: x.split(".")[0].split("/")[2].replace("-", " ")))
+article_names=list(df_articles.href.apply(lambda x: x.split("/")[-2].replace("-", " ")))
+for a in article_names:
+    print("{} -> {}".format(a, fuzzywuzzy.process.extract(a, card_names, limit=2)))

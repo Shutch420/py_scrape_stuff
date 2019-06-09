@@ -22,8 +22,13 @@
 		   requests
 		   urllib
 		   time
+		   fuzzywuzzy
+		   fuzzywuzzy.process
 		   )) 
 	 "from bs4 import BeautifulSoup"
+
+	 "# pip3 install --user fuzzywuzzy"
+	 
 	 ,(let ((l `((keywords)
 		     (categoryId (string "225"))
 		     (locationStr)
@@ -56,7 +61,8 @@
 	       ))
 
 	 (setf df (pd.read_csv (string ;"techpowerup_gpu-specs_details_1560084187.csv"
-				       "techpowerup_gpu-specs_details_1560089059.csv"
+				;"techpowerup_gpu-specs_details_1560089059.csv"
+				"techpowerup_gpu-specs_details_1560095490.csv"
 				       ;"techpowerup_gpu-specs_details.csv"
 				       )))
 
@@ -218,6 +224,23 @@
 			  pass)))
 		  (setf df_articles (pd.DataFrame res))
 		  (df_articles.to_csv (string "output_germany_gpu_distance_to_kempen.csv")))
+
+	 (setf card_names
+	  ("list"
+	   (df.stage0_url.apply (lambda (x) (dot
+					     (aref (x.split (string ".")) 0)
+					     (aref (split (string "/")) 2)
+					     (replace (string "-") (string " ")))))))
+	 
+	 (setf article_names ("list" (df_articles.href.apply (lambda (x)
+					     (dot (aref (x.split (string "/"))
+							-2)
+						  (replace (string "-") (string " ")))))))
+
+	 (for (a article_names)
+	      (print (dot (string "{} -> {}")
+			  (format a
+				  (fuzzywuzzy.process.extract a card_names :limit 2)))))
 	 
 	 #+nil
 	 (do0
