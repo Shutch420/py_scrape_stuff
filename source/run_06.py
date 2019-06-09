@@ -8,7 +8,8 @@ import logging
 import requests_html
 import urllib
 import time
-# pip3 install --user requests-html
+from googletrans import Translator
+# pip3 install --user requests-html googletransx
 # pyppeteer-install
 def gen_url(keyword="", star="", page="1", pageSize="30", cid="0,1,3", year="-1", language="%E8%8B%B1%E8%AF%AD", region="-1", status="-1", orderBy="0", desc="true"):
     with open("/dev/shm/site") as f:
@@ -20,8 +21,18 @@ session=requests_html.HTMLSession()
 r=session.get(url)
 r.html.render()
 elements=r.html.find("div[class=title-box]")
+translator=Translator()
 res=[]
+def translate_type(str):
+    lut={("喜剧"):("comedy"),("惊悚"):("horror"),("剧情"):("plot"),("科幻"):("scifi"),("动作"):("action"),("犯罪"):("crime"),("爱情"):("love"),("战争"):("war")}
+    try:
+        return lut[str]
+    except Exception as e:
+        return "-"
 for e in elements:
     h=e.find("a", first=True)
-    res.append({("link"):(h.attrs["href"]),("title"):(h.text)})
+    s=e.find("span", first=True)
+    res.append({("link"):(h.attrs["href"]),("title"):(((h.text)+(""))),("type"):(s.text),("type_en"):(translate_type(s.text))})
 df=pd.DataFrame(res)
+english=translator.translate(list(df.title))
+df["title_en"]=map(lambda x: x.text, english)

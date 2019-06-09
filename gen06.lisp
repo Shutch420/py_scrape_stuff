@@ -16,9 +16,10 @@
 		   requests_html
 		   urllib
 		   time
-	)) 
+		   ))
+	 "from googletrans import Translator"
 	 ;"from bs4 import BeautifulSoup"
-	 "# pip3 install --user requests-html"
+	 "# pip3 install --user requests-html googletransx"
 	 ;"# export PATH=$PATH:/home/martin/.local/bin"
 	 "# pyppeteer-install"
 		 
@@ -74,13 +75,36 @@
 	       )
 	 (r.html.render)
 	 (setf elements (r.html.find (string "div[class=title-box]")))
+	 (setf translator (Translator))
+
 	 (setf res (list))
+	 ,(let ((l `((喜剧 comedy) (惊悚 horror) (剧情 plot) (科幻 scifi) (动作 action) (犯罪 crime) (爱情 love)  (战争 war))))
+	    `(def translate_type (str)
+	       (setf lut (dict ,@(loop for (e f) in l collect
+				      `((string ,e) (string ,f)))))
+	       (try
+		(return (aref lut str))
+		("Exception as e"
+		 (return (string "-"))))))
+	 
 	 (for (e elements)
-	      (setf h (e.find (string "a") :first True))
+	      (setf h (e.find (string "a") :first True
+			      )
+		    s (e.find (string "span") :first True))
 
 	      (res.append
 	       (dict ((string "link") (aref h.attrs (string "href")))
-		     ((string "title") h.text))))
+		     ((string "title") (+ h.text (string "") ;(string "电影")
+					  ))
+		     ((string "type") s.text)
+		     ((string "type_en") (translate_type s.text)))))
 	 (setf df (pd.DataFrame res))
+
+	 
+	 
+	 (setf english
+	  (translator.translate ("list" df.title)))
+	 (setf (aref df (string "title_en")) (map (lambda (x) x.text) english))
+
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_06" code))
