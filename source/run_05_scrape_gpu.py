@@ -12,8 +12,8 @@ import requests
 import urllib
 import time
 from bs4 import BeautifulSoup
-def gen_url(keywords="", categoryId="225", locationStr="", locationId="", radius="", sortingField="SORTING_DATE", adType="", posterType="", pageNum="1", action="find", maxPrice="", minPrice=""):
-    return "https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?&keywords={}&categoryId={}&locationStr={}&locationId={}&radius={}&sortingField={}&adType={}&posterType={}&pageNum={}&action={}&maxPrice={}&minPrice={}".format(urllib.parse.quote(keywords), urllib.parse.quote(categoryId), urllib.parse.quote(locationStr), urllib.parse.quote(locationId), urllib.parse.quote(radius), urllib.parse.quote(sortingField), urllib.parse.quote(adType), urllib.parse.quote(posterType), urllib.parse.quote(pageNum), urllib.parse.quote(action), urllib.parse.quote(maxPrice), urllib.parse.quote(minPrice))
+def gen_url(keywords="", categoryId="225", locationStr="", locationId="", radius="", sortingField="SORTING_DATE", adType="", posterType="", pageNum="1", action="find", maxPrice="", minPrice="", extra=""):
+    return (("https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?&keywords={}&categoryId={}&locationStr={}&locationId={}&radius={}&sortingField={}&adType={}&posterType={}&pageNum={}&action={}&maxPrice={}&minPrice={}")+(extra)).format(urllib.parse.quote(keywords), urllib.parse.quote(categoryId), urllib.parse.quote(locationStr), urllib.parse.quote(locationId), urllib.parse.quote(radius), urllib.parse.quote(sortingField), urllib.parse.quote(adType), urllib.parse.quote(posterType), urllib.parse.quote(pageNum), urllib.parse.quote(action), urllib.parse.quote(maxPrice), urllib.parse.quote(minPrice))
 df=pd.read_csv("techpowerup_gpu-specs_details_1560089059.csv")
 def parse_entry(row, column=None, value_p=None):
     try:
@@ -78,3 +78,9 @@ df["launch_price"]=df.apply(lambda row: parse_entry(row, column="Graphics Card L
 df["launch_price_unit"]=df.apply(lambda row: parse_entry(row, column="Graphics Card Launch Price", value_p=False), axis=1)
 df["process_size"]=df.apply(lambda row: parse_entry(row, column="Graphics Processor Process Size", value_p=True), axis=1)
 df["process_size_unit"]=df.apply(lambda row: parse_entry(row, column="Graphics Processor Process Size", value_p=False), axis=1)
+url=gen_url(keywords="", categoryId="225", maxPrice="350", minPrice="120", locationStr="Kempen+-+Nordrhein-Westfalen", locationId="1139", radius="4000", extra="&attributeMap[pc_zubehoer_software.art_s]=grafikkarten")
+print("get {}".format(url))
+r=requests.get(url)
+content=r.text.replace("&#8203", "")
+soup=BeautifulSoup(content, "html.parser")
+articles=soup.find_all("article", {("class"):("aditem")})

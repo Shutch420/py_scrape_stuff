@@ -13,7 +13,7 @@ import random
 from bs4 import BeautifulSoup
 df=pd.read_csv("techpowerup_gpu-specs.csv")
 res=[]
-for idx, row in [(1,df.iloc[347],)]:
+for idx, row in df.iterrows():
     url=(("https://www.techpowerup.com")+(row.url))
     time.sleep((((9.999999776482582e-3))*(random.randint(10, 60))))
     print("requesting {} [{}/{}]".format(url, idx, len(df)))

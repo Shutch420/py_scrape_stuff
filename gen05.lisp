@@ -41,12 +41,15 @@
 					(destructuring-bind (name &optional value) e
 					  (if value
 					      `(,name ,value)
-					      `(,name (string ""))))))
-	       (return (dot (string ,(with-output-to-string (s)
-				   (format s "https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?")
-				   (loop for e in l collect
-					(destructuring-bind (name &optional value) e
-					  (format s "&~a={}" name value)))))
+					      `(,name (string "")))))
+				(extra (string "")))
+	       (return (dot (+ (string ,(with-output-to-string (s)
+					(format s "https://www.ebay-kleinanzeigen.de/s-suchanfrage.html?")
+					(loop for e in l collect
+					     (destructuring-bind (name &optional value) e
+					       (format s "&~a={}" name value)))
+					))
+			       extra)
 			    (format ,@(loop for e in l collect
 					   (destructuring-bind (name &optional value) e
 					     `(urllib.parse.quote ,name))))))
@@ -144,23 +147,32 @@
 						 :column (string ,colname) :value_p True)
 				    (parse_entry (aref df.iloc 1503)
 						 :column (string ,colname) :value_p False)))))))))
+
+	 (setf url (gen_url :keywords (string "")
+			    :categoryId (string "225")
+			    :maxPrice (string "350")
+			    :minPrice (string "120")
+			    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
+			    :locationId (string "1139")
+			    :radius (string "4000")
+			    :extra (string "&attributeMap[pc_zubehoer_software.art_s]=grafikkarten")
+			    ))
+
+	 (print (dot (string "get {}")
+		     (format url)))
+
+	 (setf r (requests.get url)
+	       content (r.text.replace (string "&#8203") (string ""))
+	       soup (BeautifulSoup content (string "html.parser"))
+	       articles (soup.find_all (string "article")
+				       (dict ((string "class") (string "aditem")))))
+
 	 
 	 #+nil
 	 (do0
 	  "# load the url"
-	  #+nil
-	  (setf url (gen_url :keywords (string "vega 56")
-			     :maxPrice (string "350")
-			     :minPrice (string "120")))
-	  (setf intel_processors (list ,@(loop for e in *intel* appending
-					      (destructuring-bind (gen-id gen-name devices) e
-					       (loop for dev in devices appending
-						    (destructuring-bind (group-keyword group-name device-ids) dev
-						      (loop for d in device-ids collect
-							   `(tuple (string ,(format nil "~a ~a" group-keyword d))
-								   (string ,gen-id)
-								   (string ,group-keyword)
-								   (string ,d)))))))))
+	  
+	  
 	  (setf res (list))
 	  (for ((ntuple idx (tuple keywords gen_id group_keyword device_id)) (enumerate intel_processors))
 	       (try
@@ -172,8 +184,6 @@
 		 (setf url (gen_url :keywords keywords
 				    :categoryId (string "228")  ;; PCs
 				    ;:radius (string "30") ;; km
-				    :locationStr (string "Kempen+-+Nordrhein-Westfalen")
-				    :locationId (string "1139")
 				    ))
 		 (setf r (requests.get url)
 		       content (r.text.replace (string "&#8203") (string ""))
