@@ -61,8 +61,12 @@
 			    (setf
 			     entry_stripped (entry.strip)
 			     entry_parts (entry_stripped.split (string " "))
-			     value (float (dot (aref entry_parts 0)
-					       (replace (string ",") (string ""))))
+			     value_string (dot (aref entry_parts 0)
+					       (replace (string ",") (string "")))
+			     value (or
+				    (and (== value_string (string "System"))
+					 -1d0)
+				    (float value_string))
 			     unit (dot (string " ")
 				       (join (aref entry_parts "1:"))))
 			    (if (in (string "GFLOPS") unit)
@@ -91,12 +95,22 @@
 	   `(do0
 	     ,@(loop for e in l collect
 		    (destructuring-bind (name colname) e
-		     `(do0
-		       
+		      `(do0
+			(setf (aref df (string ,name))
+			      (df.apply (lambda (row) (parse_entry row
+								   :column (string ,colname) :value_p True))
+					:axis 1))
+			(setf (aref df (string ,(format nil "~a_unit" name)))
+			      (df.apply (lambda (row) (parse_entry row
+								   :column (string ,colname) :value_p False))
+					:axis 1))
+		       #+nil
 		       (print (dot (string ,(format nil "~a:  : value={} unit={}" name))
 				   (format 
-					   (parse_entry (aref df.iloc 1503) :column (string ,colname) :value_p True)
-					   (parse_entry (aref df.iloc 1503) :column (string ,colname) :value_p False)))))))))
+				    (parse_entry (aref df.iloc 1503)
+						 :column (string ,colname) :value_p True)
+				    (parse_entry (aref df.iloc 1503)
+						 :column (string ,colname) :value_p False)))))))))
 	 
 	 #+nil
 	 (do0
