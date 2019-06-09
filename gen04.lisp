@@ -18,8 +18,32 @@
 		   )) 
 	 "from bs4 import BeautifulSoup"
 
-	 (setf df (read_csv (string "techpowerup_gpu-specs.csv")))
-	 ;;https://www.techpowerup.com/gpu-specs/radeon-pro-580x.c3398
+	 (setf df (pd.read_csv (string "techpowerup_gpu-specs.csv")))
+
+	 (setf row (aref df.iloc -1))
+	 (setf url (+ (string "https://www.techpowerup.com") row.url))
+	 (print (dot (string "requesting {}")
+		     (format url)))
+	 "# https://pythonprogramminglanguage.com/web-scraping-with-pandas-and-beautifulsoup/"
+	 (setf r (requests.get url)
+			   content (r.text.replace (string "&#8203") (string ""))
+			   soup (BeautifulSoup content (string "html.parser"))
+			   sections (soup.find_all (string "section")
+						   (dict ((string "class")
+							  (string "details"))))
+			   detail_list ("list"
+					(map (lambda (section) (dict ((string "title")
+								      (dot (section.find (string "h2"))
+									   text))
+								     ((string "data")
+								      ("list" (map (lambda (row)
+										   (tuple row.dt.text row.dd.text))
+										 (or
+										  (and (section.find (string "div"))
+										       (dot (section.find (string "div"))
+											    (find_all (string "dl"))))
+										  (list)))))))
+				    sections)))
 
 	 #+nil(for (database (list ;(string "cpudb")
 			      (string "gpu-specs")))
