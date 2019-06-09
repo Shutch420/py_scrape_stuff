@@ -49,47 +49,54 @@
 
 	 (setf df (pd.read_csv (string "techpowerup_gpu-specs_details.csv")))
 
-	 ,(let ((l `( "Theoretical Performance FP16 (half) performance"
-		     "Theoretical Performance FP32 (float) performance"
-		     "Theoretical Performance FP64 (double) performance"
-		     "Theoretical Performance Pixel Rate"
-		     "Theoretical Performance Texture Rate"
-		     "Graphics Processor Transistors"
-		     "Memory Bandwidth"
-		     "Graphics Processor Die Size"
-		     "Board Design TDP"
+
+
+	 (def parse_entry (row &key column value_p)
+	   (setf entry (aref row column))
+	   (if (or (pd.isnull entry)
+			       (== entry (string "unknown")))
+			   (setf value np.nan
+				 unit (string ""))
+			   (do0
+			    (setf
+			     entry_stripped (entry.strip)
+			     entry_parts (entry_stripped.split (string " "))
+			     value (float (dot (aref entry_parts 0)
+					       (replace (string ",") (string ""))))
+			     unit (dot (string " ")
+				       (join (aref entry_parts "1:"))))
+			    (if (in (string "GFLOPS") unit)
+				(setf unit (unit.replace (string "GFLOPS")
+							 (string "TFLOPS")
+							 )
+				      value (* 1e-3 value)
+				      ))))
+	   (if value_p
+	       (return value)
+	       (return unit)))
+	 
+	 ,(let ((l `((flops16 "Theoretical Performance FP16 (half) performance")
+		     (flops32 "Theoretical Performance FP32 (float) performance")
+		     (flops64 "Theoretical Performance FP64 (double) performance")
+		     (pixel_rate "Theoretical Performance Pixel Rate")
+		     (tex_rate "Theoretical Performance Texture Rate")
+		     (transistors "Graphics Processor Transistors")
+		     (mem_bandwidth "Memory Bandwidth")
+		     (die_size "Graphics Processor Die Size")
+		     (tdp "Board Design TDP")
 		     ;"Graphics Card Release Date"
-		     "Graphics Card Launch Price"
-		     "Graphics Processor Process Size"
+		     (launch_price "Graphics Card Launch Price")
+		     (process_size "Graphics Processor Process Size")
 		     )))
 	   `(do0
 	     ,@(loop for e in l collect
-		    `(do0
-		      (setf entry (dot (aref df (string ,e))
-				       (aref iloc 1503)
-				       )
-			    )
-		      (if (or (pd.isnull entry)
-			      (== entry (string "unknown")))
-			  (setf value np.nan
-				unit (string ""))
-			  (do0
-			   (setf
-			    entry_stripped (entry.strip)
-			    entry_parts (entry_stripped.split (string " "))
-			    value (float (dot (aref entry_parts 0)
-					      (replace (string ",") (string ""))))
-			    unit (dot (string " ")
-				      (join (aref entry_parts "1:"))))
-			   (if (in (string "GFLOPS") unit)
-			       (setf unit (unit.replace (string "GFLOPS")
-						   (string "TFLOPS")
-						)
-				     value (* 1e-3 value)
-				     ))))
-		      (print (dot (string ,(format nil "~a: '{}' : value={} unit={}" e))
-				  (format entry value unit
-					  )))))))
+		    (destructuring-bind (name colname) e
+		     `(do0
+		       
+		       (print (dot (string ,(format nil "~a:  : value={} unit={}" name))
+				   (format 
+					   (parse_entry (aref df.iloc 1503) :column (string ,colname) :value_p True)
+					   (parse_entry (aref df.iloc 1503) :column (string ,colname) :value_p False)))))))))
 	 
 	 #+nil
 	 (do0
