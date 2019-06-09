@@ -66,20 +66,27 @@
 	     ,@(loop for e in l collect
 		    `(do0
 		      (setf entry (dot (aref df (string ,e))
-				       (aref iloc 1403)
+				       (aref iloc 1503)
 				       )
 			    )
 		      (if (or (pd.isnull entry)
 			      (== entry (string "unknown")))
 			  (setf value np.nan
 				unit (string ""))
-			  (setf
-			   entry_stripped (entry.strip)
-			   entry_parts (entry_stripped.split (string " "))
-			   value (float (dot (aref entry_parts 0)
-					     (replace (string ",") (string ""))))
-			   unit (dot (string " ")
-				     (join (aref entry_parts "1:")))))
+			  (do0
+			   (setf
+			    entry_stripped (entry.strip)
+			    entry_parts (entry_stripped.split (string " "))
+			    value (float (dot (aref entry_parts 0)
+					      (replace (string ",") (string ""))))
+			    unit (dot (string " ")
+				      (join (aref entry_parts "1:"))))
+			   (if (in (string "GFLOPS") unit)
+			       (setf unit (unit.replace (string "GFLOPS")
+						   (string "TFLOPS")
+						)
+				     value (* 1e-3 value)
+				     ))))
 		      (print (dot (string ,(format nil "~a: '{}' : value={} unit={}" e))
 				  (format entry value unit
 					  )))))))
