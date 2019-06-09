@@ -31,8 +31,21 @@ def translate_type(str):
         return "-"
 for e in elements:
     h=e.find("a", first=True)
+    title=h.text
     s=e.find("span", first=True)
-    res.append({("link"):(h.attrs["href"]),("title"):(((h.text)+(""))),("type"):(s.text),("type_en"):(translate_type(s.text))})
+    res.append({("link"):(h.attrs["href"]),("title"):(title),("type"):(s.text),("type_en"):(translate_type(s.text))})
 df=pd.DataFrame(res)
-english=translator.translate(list(df.title))
-df["title_en"]=map(lambda x: x.text, english)
+def get_rating(row):
+    try:
+        rating_url="https://www.google.com/search?client=firefox-b-d&q={}+imdb+rating&gl=us".format(urllib.parse.quote(row.title))
+        print("get rating {}".format(rating_url))
+        rg=session.get(rating_url)
+        rg.html.render()
+        rating="-"
+        rating=rg.html.xpath("//g-review-stars/..", first=True).text
+        print("rating {}".format(rating))
+        time.sleep(3)
+        return rating
+    except Exception as e:
+        return "-"
+df["rating"]=df.apply(get_rating, axis=1)

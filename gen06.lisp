@@ -90,21 +90,48 @@
 	 (for (e elements)
 	      (setf h (e.find (string "a") :first True
 			      )
+		    title h.text
 		    s (e.find (string "span") :first True))
-
+	      
+	      
 	      (res.append
 	       (dict ((string "link") (aref h.attrs (string "href")))
-		     ((string "title") (+ h.text (string "") ;(string "电影")
-					  ))
+		     ((string "title") title)
 		     ((string "type") s.text)
+		     
 		     ((string "type_en") (translate_type s.text)))))
 	 (setf df (pd.DataFrame res))
 
+	 (def get_rating (row)
+	   (try
+	    (do0
+	     (setf rating_url (dot (string
+				    "https://www.google.com/search?client=firefox-b-d&q={}+imdb+rating&gl=us")
+				   (format (urllib.parse.quote row.title))))
+	     (print (dot (string "get rating {}")
+			 (format rating_url)))
+	     
+	     (setf rg (session.get rating_url))
+	     (rg.html.render)
+	     (setf rating (string "-"))
+	     (setf rating (dot (rg.html.xpath (string "//g-review-stars/..") :first True)
+			       text))
+	     
+	     (print (dot (string "rating {}")
+			 (format rating)))
+	     (time.sleep 3)
+	     (return rating))
+	    ("Exception as e"
+	       (return (string "-")))))
+
+	 (setf (aref df (string "rating")) (df.apply get_rating :axis 1))
 	 
 	 
-	 (setf english
-	  (translator.translate ("list" df.title)))
-	 (setf (aref df (string "title_en")) (map (lambda (x) x.text) english))
+	 #+nil
+	 (do0
+	  (setf english
+		(translator.translate ("list" df.title)))
+	  (setf (aref df (string "title_en")) ("list" (map (lambda (x) x.text) english))))
 
 	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_06" code))
