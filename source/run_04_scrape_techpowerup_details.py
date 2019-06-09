@@ -13,7 +13,7 @@ import random
 from bs4 import BeautifulSoup
 df=pd.read_csv("techpowerup_gpu-specs.csv")
 res=[]
-for idx, row in df.iterrows():
+for idx, row in [(1,df.iloc[347],)]:
     url=(("https://www.techpowerup.com")+(row.url))
     time.sleep((((9.999999776482582e-3))*(random.randint(10, 60))))
     print("requesting {} [{}/{}]".format(url, idx, len(df)))
@@ -22,21 +22,21 @@ for idx, row in df.iterrows():
     content=r.text.replace("&#8203", "")
     soup=BeautifulSoup(content, "html.parser")
     sections=soup.find_all(lambda tag: ((((tag.name)==("section"))) and (((tag.get("class"))==(["details"])))))
-    columns=[]
+    titles=[]
     for section in sections:
-        col_orig=section.h2.text.strip()
-        col=col_orig
+        tit_orig=section.h2.text.strip()
+        tit=tit_orig
         count=2
-        while ((col in columns)):
-            col=((col_orig)+("_")+(str(count)))
+        while ((tit in titles)):
+            tit=((tit_orig)+("_")+(str(count)))
             count=((1)+(count))
-        columns.append(col)
+        titles.append(tit)
     dres={("url"):(row.url),("scrape_timestamp"):(time.time())}
     try:
-        for section in sections:
+        for tit_name, section in zip(titles, sections):
             if ( section.div ):
-                for col_name, line in zip(columns, section.div.find_all("dl")):
-                    dres[((col_name)+(" ")+(line.dt.text.strip()))]=line.dd.text.strip()
+                for line in section.div.find_all("dl"):
+                    dres[((tit_name)+(" ")+(line.dt.text.strip()))]=line.dd.text.strip()
     except Exception as e:
         print("warn {}".format(e))
         pass

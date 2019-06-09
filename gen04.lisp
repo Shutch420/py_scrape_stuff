@@ -24,8 +24,8 @@
 	 ;(setf row (aref df.iloc -1))
 	 (setf res (list))
 	 (for ((ntuple idx row)
-	       #-nil (df.iterrows)
-	       #+nil(list ;(tuple 0 (aref df.iloc -1))
+	       #+nil (df.iterrows)
+	       #-nil(list ;(tuple 0 (aref df.iloc -1))
 			  (tuple 1 (aref df.iloc 347))))
 	  (do0
 	   (setf url (+ (string "https://www.techpowerup.com") row.url))
@@ -42,27 +42,27 @@
 						    (list (string "details"))))))
 		 )
 	   (do0
-	    ;; find column names
-	    (setf columns (list))
+	    ;; find table title names
+	    (setf titles (list))
 	    (for (section sections)
-		 (setf col_orig (section.h2.text.strip)
-		       col col_orig
+		 (setf tit_orig (section.h2.text.strip)
+		       tit tit_orig
 		       count 2)
 		 ;; append number if col occured already
-		 (while (in col columns)
-		   (setf col (+ col_orig (string "_") (str count))
+		 (while (in tit titles)
+		   (setf tit (+ tit_orig (string "_") (str count))
 			 count (+ 1 count)))
-		 (columns.append col)))
+		 (titles.append tit)))
 
 	   (do0
 	    ;; read values and create dict with name : value
 	    (setf dres (dict ((string url) row.url)
 			     ((string scrape_timestamp) (time.time))))
 	    (try
-	     (for (section sections)
+	     (for ((ntuple tit_name section) (zip titles sections))
 		  (if section.div
-		      (for ((ntuple col_name line) (zip columns (section.div.find_all (string "dl"))))
-			   (setf (aref dres (+ col_name (string " ") (line.dt.text.strip)))
+		      (for (line (section.div.find_all (string "dl")))
+			   (setf (aref dres (+ tit_name (string " ") (line.dt.text.strip)))
 				 (line.dd.text.strip)))))
 	     ("Exception as e"
 	      (print (dot (string "warn {}")
