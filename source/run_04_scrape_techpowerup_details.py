@@ -13,7 +13,7 @@ import random
 from bs4 import BeautifulSoup
 df=pd.read_csv("techpowerup_gpu-specs.csv")
 res=[]
-for idx, row in df.iterrows():
+for idx, row in [(1,df.iloc[347],)]:
     url=(("https://www.techpowerup.com")+(row.url))
     time.sleep((((9.999999776482582e-3))*(random.randint(10, 60))))
     print("requesting {} [{}/{}]".format(url, idx, len(df)))
@@ -31,7 +31,9 @@ for idx, row in df.iterrows():
             tit=((tit_orig)+("_")+(str(count)))
             count=((1)+(count))
         titles.append(tit)
-    dres={("url"):(row.url),("scrape_timestamp"):(time.time())}
+    dres={("scrape_timestamp"):(time.time())}
+    for col in df.columns:
+        dres[(("stage0_")+(col))]=row[col]
     try:
         for tit_name, section in zip(titles, sections):
             if ( section.div ):

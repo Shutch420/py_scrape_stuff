@@ -24,8 +24,8 @@
 	 ;(setf row (aref df.iloc -1))
 	 (setf res (list))
 	 (for ((ntuple idx row)
-	       #-nil (df.iterrows)
-	       #+nil(list ;(tuple 0 (aref df.iloc -1))
+	       #+nil (df.iterrows)
+	       #-nil(list ;(tuple 0 (aref df.iloc -1))
 			  (tuple 1 (aref df.iloc 347))))
 	  (do0
 	   (setf url (+ (string "https://www.techpowerup.com") row.url))
@@ -56,8 +56,11 @@
 
 	   (do0
 	    ;; read values and create dict with name : value
-	    (setf dres (dict ((string url) row.url)
-			     ((string scrape_timestamp) (time.time))))
+	    (setf dres (dict ;((string url) row.url)
+			     ;((string mfgr) row.mfgr)
+			((string scrape_timestamp) (time.time))))
+	    (for (col df.columns)
+		 (setf (aref dres (+ (string "stage0_") col)) (aref row col)))
 	    (try
 	     (for ((ntuple tit_name section) (zip titles sections))
 		  (if section.div
