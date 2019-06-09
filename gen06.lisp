@@ -12,12 +12,12 @@
 		   html
 		   json
 		   logging
-		   requests
+		   ;requests
 		   requests_html
 		   urllib
 		   time
 	)) 
-	 "from bs4 import BeautifulSoup"
+	 ;"from bs4 import BeautifulSoup"
 	 "# pip3 install --user requests-html"
 	 ;"# export PATH=$PATH:/home/martin/.local/bin"
 	 "# pyppeteer-install"
@@ -28,14 +28,14 @@
 		     (pageSize (string "30"))
 		     (cid (string "0,1,3"))  ;; (string "0,1,4") 
 		     (year (string "-1"))
-		     (language (string "%E8%8B%B1%E8%AF%AD"))
+		     (language (string "%E8%8B%B1%E8%AF%AD") t)
 		     (region (string "-1"))
 		     (status (string "-1"))
 		     (orderBy (string "0"))
 		     (desc (string "true")))))
 
 	    `(def gen_url (&key ,@(loop for e in l collect
-					(destructuring-bind (name &optional value) e
+					(destructuring-bind (name &optional value dont-quote) e
 					  (if value
 					      `(,name ,value)
 					      `(,name (string "")))))
@@ -46,15 +46,17 @@
 	       (return (dot (string ,(with-output-to-string (s)
 				       (format s "https://www.{}/list?")
 				       (loop for e in l collect
-					    (destructuring-bind (name &optional value) e
+					    (destructuring-bind (name &optional value dont-quote) e
 					      (format s "&~a={}" name value)))
 				       ))
 			    
 			    (format
 			     site
 			     ,@(loop for e in l collect
-					   (destructuring-bind (name &optional value) e
-					     `(urllib.parse.quote ,name))))))
+					   (destructuring-bind (name &optional value dont-quote) e
+					     (if dont-quote
+						 name
+						 `(urllib.parse.quote ,name)))))))
 	       ))
 
 
@@ -71,5 +73,14 @@
 	       ;content  ;(r.text.replace (string "&#8203") (string ""))
 	       )
 	 (r.html.render)
-	 (setf soup (BeautifulSoup r.content (string "html.parser"))))))
+	 (setf elements (r.html.find (string "div[class=title-box]")))
+	 (setf res (list))
+	 (for (e elements)
+	      (setf h (e.find (string "a") :first True))
+
+	      (res.append
+	       (dict ((string "link") (aref h.attrs (string "href")))
+		     ((string "title") h.text))))
+	 (setf df (pd.DataFrame res))
+	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_06" code))

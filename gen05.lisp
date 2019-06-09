@@ -236,7 +236,8 @@
 					     (dot (aref (x.split (string "/"))
 							-2)
 						  (replace (string "-") (string " ")))))))
-
+	 ;; search for rtx, gtx, rx, r9, vega followed by a number and then ti
+	 ;; i could also try to learn trigram probability
 	 (for (a article_names)
 	      (print (dot (string "{} -> {}")
 			  (format a
