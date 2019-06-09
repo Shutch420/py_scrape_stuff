@@ -25,17 +25,23 @@ def parse_entry(row, column=None, value_p=None):
         unit=" ".join(entry_parts[1:])
         if ( ("GFLOPS" in unit) ):
             unit=unit.replace("GFLOPS", "TFLOPS")
-            value=(((1.0000000474974513e-3))*(value))
+            value=((value)/(1000))
+        if ( ("MPixel" in unit) ):
+            unit=unit.replace("MPixel", "GPixel")
+            value=((value)/(1000))
+        if ( ("MTexel" in unit) ):
+            unit=unit.replace("MTexel", "MPixel")
+            value=((value)/(1000))
     if ( value_p ):
         return value
     else:
         return unit
-df["flops16"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP16 (half) performance", value_p=True), axis=1)
-df["flops16_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP16 (half) performance", value_p=False), axis=1)
-df["flops32"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP32 (float) performance", value_p=True), axis=1)
-df["flops32_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP32 (float) performance", value_p=False), axis=1)
-df["flops64"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP64 (double) performance", value_p=True), axis=1)
-df["flops64_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP64 (double) performance", value_p=False), axis=1)
+df["tflops16"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP16 (half) performance", value_p=True), axis=1)
+df["tflops16_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP16 (half) performance", value_p=False), axis=1)
+df["tflops32"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP32 (float) performance", value_p=True), axis=1)
+df["tflops32_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP32 (float) performance", value_p=False), axis=1)
+df["tflops64"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP64 (double) performance", value_p=True), axis=1)
+df["tflops64_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance FP64 (double) performance", value_p=False), axis=1)
 df["pixel_rate"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Pixel Rate", value_p=True), axis=1)
 df["pixel_rate_unit"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Pixel Rate", value_p=False), axis=1)
 df["tex_rate"]=df.apply(lambda row: parse_entry(row, column="Theoretical Performance Texture Rate", value_p=True), axis=1)

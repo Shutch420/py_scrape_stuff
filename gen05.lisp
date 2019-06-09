@@ -69,19 +69,24 @@
 				    (float value_string))
 			     unit (dot (string " ")
 				       (join (aref entry_parts "1:"))))
-			    (if (in (string "GFLOPS") unit)
-				(setf unit (unit.replace (string "GFLOPS")
-							 (string "TFLOPS")
-							 )
-				      value (* 1e-3 value)
-				      ))))
+
+			    ,@(let ((l `((GFLOPS TFLOPS 1000)
+					(MPixel GPixel 1000)
+					(MTexel MPixel 1000))))
+				(loop for e in l collect
+				     (destructuring-bind (small big factor) e
+				      `(if (in (string ,small) unit)
+					  (setf unit (unit.replace (string ,small)
+								   (string ,big)
+								   )
+						value (/ value ,factor))))))))
 	   (if value_p
 	       (return value)
 	       (return unit)))
 	 
-	 ,(let ((l `((flops16 "Theoretical Performance FP16 (half) performance")
-		     (flops32 "Theoretical Performance FP32 (float) performance")
-		     (flops64 "Theoretical Performance FP64 (double) performance")
+	 ,(let ((l `((tflops16 "Theoretical Performance FP16 (half) performance")
+		     (tflops32 "Theoretical Performance FP32 (float) performance")
+		     (tflops64 "Theoretical Performance FP64 (double) performance")
 		     (pixel_rate "Theoretical Performance Pixel Rate")
 		     (tex_rate "Theoretical Performance Texture Rate")
 		     (transistors "Graphics Processor Transistors")
