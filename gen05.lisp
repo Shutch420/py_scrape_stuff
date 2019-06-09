@@ -93,7 +93,7 @@
 		     (vertex_rate "Theoretical Performance Vertex Rate")
 		     (transistors "Graphics Processor Transistors")
 		     (mem_bandwidth "Memory Bandwidth")
-		     (die_size "Graphics Processor Die Size")
+		     (die_size "Graphics Processor Die Size") 
 		     (tdp "Board Design TDP")
 		     ;"Graphics Card Release Date"
 		     (launch_price "Graphics Card Launch Price")
