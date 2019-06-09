@@ -87,7 +87,7 @@
 		("Exception as e"
 		 (return (string "-"))))))
 	 
-	 (for (e elements)
+	 (for (e (aref elements "3:6"))
 	      (setf h (e.find (string "a") :first True
 			      )
 		    title h.text
@@ -102,6 +102,7 @@
 		     ((string "type_en") (translate_type s.text)))))
 	 (setf df (pd.DataFrame res))
 
+	 (setf rating_list (list))
 	 (def get_rating (row)
 	   (try
 	    (do0
@@ -116,7 +117,8 @@
 	     (setf rating (string "-"))
 	     (setf rating (dot (rg.html.xpath (string "//g-review-stars/..") :first True)
 			       text))
-	     
+	     "global rating_list"
+	     (rating_list.append rg)
 	     (print (dot (string "rating {}")
 			 (format rating)))
 	     (time.sleep 3)

@@ -29,12 +29,13 @@ def translate_type(str):
         return lut[str]
     except Exception as e:
         return "-"
-for e in elements:
+for e in elements[3:6]:
     h=e.find("a", first=True)
     title=h.text
     s=e.find("span", first=True)
     res.append({("link"):(h.attrs["href"]),("title"):(title),("type"):(s.text),("type_en"):(translate_type(s.text))})
 df=pd.DataFrame(res)
+rating_list=[]
 def get_rating(row):
     try:
         rating_url="https://www.google.com/search?client=firefox-b-d&q={}+imdb+rating&gl=us".format(urllib.parse.quote(row.title))
@@ -43,6 +44,8 @@ def get_rating(row):
         rg.html.render()
         rating="-"
         rating=rg.html.xpath("//g-review-stars/..", first=True).text
+        global rating_list
+        rating_list.append(rg)
         print("rating {}".format(rating))
         time.sleep(3)
         return rating
