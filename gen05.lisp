@@ -58,7 +58,7 @@
 		     "Memory Bandwidth"
 		     "Graphics Processor Die Size"
 		     "Board Design TDP"
-		     "Graphics Card Release Date"
+		     ;"Graphics Card Release Date"
 		     "Graphics Card Launch Price"
 		     "Graphics Processor Process Size"
 		     )))
@@ -66,18 +66,20 @@
 	     ,@(loop for e in l collect
 		    `(do0
 		      (setf entry (dot (aref df (string ,e))
-				       (aref iloc 1203)
+				       (aref iloc 1403)
 				       )
 			    )
-		      (if (pd.isnull entry)
-			  (setf value entry
+		      (if (or (pd.isnull entry)
+			      (== entry (string "unknown")))
+			  (setf value np.nan
 				unit (string ""))
 			  (setf
 			   entry_stripped (entry.strip)
 			   entry_parts (entry_stripped.split (string " "))
 			   value (float (dot (aref entry_parts 0)
-				       (replace (string ",") (string ""))))
-			   unit (aref entry_parts -1)))
+					     (replace (string ",") (string ""))))
+			   unit (dot (string " ")
+				     (join (aref entry_parts "1:")))))
 		      (print (dot (string ,(format nil "~a: '{}' : value={} unit={}" e))
 				  (format entry value unit
 					  )))))))
