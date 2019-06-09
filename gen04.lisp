@@ -15,6 +15,7 @@
 		   time
 		   functools
 		   operator
+		   random
 		   )) 
 	 "from bs4 import BeautifulSoup"
 
@@ -23,12 +24,12 @@
 	 ;(setf row (aref df.iloc -1))
 	 (setf res (list))
 	 (for ((ntuple idx row)
-	       #+nil (df.iterrows)
-	       #-nil(list ;(tuple 0 (aref df.iloc -1))
+	       #-nil (df.iterrows)
+	       #+nil(list ;(tuple 0 (aref df.iloc -1))
 			  (tuple 1 (aref df.iloc 347))))
 	  (do0
 	   (setf url (+ (string "https://www.techpowerup.com") row.url))
-	   (time.sleep .2)
+	   (time.sleep (* .01 (random.randint 10 60)))
 	   (print (dot (string "requesting {} [{}/{}]")
 		       (format url idx (len df))))
 	   "# https://pythonprogramminglanguage.com/web-scraping-with-pandas-and-beautifulsoup/"
@@ -39,30 +40,7 @@
 					   (and (== tag.name (string "section"))
 						(== (tag.get (string "class"))
 						    (list (string "details"))))))
-		 
-		 
-					;detail_list_
-		 #+nil
-		 (+
-		  (list (tuple (string url) row.url)
-			(tuple (string time) (time.time)))
-		  (functools.reduce operator.iconcat 
-				    ("list"
-				     (map (lambda (section) ("list"
-							     (map (lambda (row)
-								    (tuple (+ (dot (section.find (string "h2"))
-										   text
-										   (strip))
-									      (string " ")
-									      (row.dt.text.strip)) (row.dd.text.strip)))
-								  
-								  (or
-								   (and (section.find (string "div"))
-									(dot (section.find (string "div"))
-									     (find_all (string "dl"))))
-								   (list)))))
-					  sections))
-				    (list))))
+		 )
 	   (do0
 	    ;; find column names
 	    (setf columns (list))
@@ -97,5 +75,8 @@
 	   #+nil (res.append ("dict" detail_list))
 	   (setf df_out (pd.DataFrame res))
 	   (df_out.to_csv (dot (string "techpowerup_gpu-specs_details_{}.csv")
-			       (format (int (time.time))))))))))
+			       (format (string "intermediate"))))))
+	 (df_out.to_csv (dot (string "techpowerup_gpu-specs_details_{}.csv")
+			       (format (int (time.time)))))
+	 )))
   (write-source "/home/martin/stage/py_scrape_stuff/source/run_04_scrape_techpowerup_details" code))

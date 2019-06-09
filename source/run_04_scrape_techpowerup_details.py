@@ -9,12 +9,13 @@ import urllib
 import time
 import functools
 import operator
+import random
 from bs4 import BeautifulSoup
 df=pd.read_csv("techpowerup_gpu-specs.csv")
 res=[]
-for idx, row in [(1,df.iloc[347],)]:
+for idx, row in df.iterrows():
     url=(("https://www.techpowerup.com")+(row.url))
-    time.sleep((2.0000000298023224e-1))
+    time.sleep((((9.999999776482582e-3))*(random.randint(10, 60))))
     print("requesting {} [{}/{}]".format(url, idx, len(df)))
     # https://pythonprogramminglanguage.com/web-scraping-with-pandas-and-beautifulsoup/
     r=requests.get(url)
@@ -41,4 +42,5 @@ for idx, row in [(1,df.iloc[347],)]:
         pass
     res.append(dres)
     df_out=pd.DataFrame(res)
-    df_out.to_csv("techpowerup_gpu-specs_details_{}.csv".format(int(time.time())))
+    df_out.to_csv("techpowerup_gpu-specs_details_{}.csv".format("intermediate"))
+df_out.to_csv("techpowerup_gpu-specs_details_{}.csv".format(int(time.time())))
