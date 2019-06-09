@@ -12,7 +12,7 @@ import operator
 from bs4 import BeautifulSoup
 df=pd.read_csv("techpowerup_gpu-specs.csv")
 res=[]
-for idx, row in [(0,df.iloc[-1],), (1,df.iloc[-2],)]:
+for idx, row in df.iterrows():
     url=(("https://www.techpowerup.com")+(row.url))
     time.sleep(3)
     print("requesting {} [{}/{}]".format(url, idx, len(df)))
@@ -24,4 +24,4 @@ for idx, row in [(0,df.iloc[-1],), (1,df.iloc[-2],)]:
     detail_list=(([("url",row.url,), ("time",time.time(),)])+(functools.reduce(operator.iconcat, list(map(lambda section: list(map(lambda row: (((section.find("h2").text.strip())+(" ")+(row.dt.text.strip())),row.dd.text.strip(),), ((((section.find("div")) and (section.find("div").find_all("dl")))) or ([])))), sections)), [])))
     res.append(dict(detail_list))
     df_out=pd.DataFrame(res)
-    df_out.to_csv()
+    df_out.to_csv("techpowerup_gpu-specs_details.csv")
