@@ -167,6 +167,57 @@
 	       articles (soup.find_all (string "article")
 				       (dict ((string "class") (string "aditem")))))
 
+	 (if "articles is None"
+		     (do0
+		      (logging.info (string "No graphics cards."))))
+
+	 (do0
+		  "# parse articles"
+		  (print (dot (string "found {} articles.")
+			      (format  (len articles))))
+		  (setf res (list))
+		  (for (article articles)
+		       (try
+			 (do0
+			  ,(let ((l `((details (article.find (string "div") (dict ((string "class")
+										   (string "aditem-details")))))
+				      (price (and details
+						  (dot (details.find (string "strong"))
+						       text)))
+				      (vb (and price
+					       (in (string "VB") price)))
+				      (header (article.find (string "h2")
+							    (dict ((string "class")
+								   (string "text-module-begin")))))
+				      (href (and header
+						 (aref (header.find (string "a")
+								    :href True)
+						       (string "href"))))
+				      (date (dot (article.find (string "div")
+							       (dict ((string "class")
+								      (string "aditem-addon"))))
+						 text
+						 (strip)))
+				      (ignore False)
+				      (timestamp (time.time))
+				      ;(article)
+				      
+				      )))
+			     `(do0
+			       ,@(loop for e in l collect
+				      (destructuring-bind (name &optional code) e
+					(if code
+					    `(setf ,name ,code)
+					    "# no code")))
+			       (res.append (dict ,@(loop for e in l collect
+							(destructuring-bind (name &optional code) e
+							  `((string ,name) ,name))))))))
+			 ("Exception as e"
+			  (print (dot (string "WARNING problem {} in article {}")
+				      (format e article)))
+			  pass)))
+		  (setf df_articles (pd.DataFrame res))
+		  (df_articles.to_csv (string "output_germany_gpu_distance_to_kempen.csv")))
 	 
 	 #+nil
 	 (do0

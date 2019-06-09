@@ -84,3 +84,24 @@ r=requests.get(url)
 content=r.text.replace("&#8203", "")
 soup=BeautifulSoup(content, "html.parser")
 articles=soup.find_all("article", {("class"):("aditem")})
+if ( articles is None ):
+    logging.info("No graphics cards.")
+# parse articles
+print("found {} articles.".format(len(articles)))
+res=[]
+for article in articles:
+    try:
+        details=article.find("div", {("class"):("aditem-details")})
+        price=((details) and (details.find("strong").text))
+        vb=((price) and (("VB" in price)))
+        header=article.find("h2", {("class"):("text-module-begin")})
+        href=((header) and (header.find("a", href=True)["href"]))
+        date=article.find("div", {("class"):("aditem-addon")}).text.strip()
+        ignore=False
+        timestamp=time.time()
+        res.append({("details"):(details),("price"):(price),("vb"):(vb),("header"):(header),("href"):(href),("date"):(date),("ignore"):(ignore),("timestamp"):(timestamp)})
+    except Exception as e:
+        print("WARNING problem {} in article {}".format(e, article))
+        pass
+df_articles=pd.DataFrame(res)
+df_articles.to_csv("output_germany_gpu_distance_to_kempen.csv")
