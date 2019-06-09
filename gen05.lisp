@@ -47,40 +47,49 @@
 					     `(urllib.parse.quote ,name))))))
 	       ))
 
-	 (setf df (pd.read_csv (string "techpowerup_gpu-specs_details.csv")))
+	 (setf df (pd.read_csv (string "techpowerup_gpu-specs_details_1560084187.csv"
+				       ;"techpowerup_gpu-specs_details.csv"
+				       )))
 
 
 
 	 (def parse_entry (row &key column value_p)
-	   (setf entry (aref row column))
-	   (if (or (pd.isnull entry)
-			       (== entry (string "unknown")))
-			   (setf value np.nan
-				 unit (string ""))
-			   (do0
-			    (setf
-			     entry_stripped (entry.strip)
-			     entry_parts (entry_stripped.split (string " "))
-			     value_string (dot (aref entry_parts 0)
-					       (replace (string ",") (string "")))
-			     value (or
-				    (and (== value_string (string "System"))
-					 -1d0)
-				    (float value_string))
-			     unit (dot (string " ")
-				       (join (aref entry_parts "1:"))))
+	   
+	   (try
+	    (do0
+	     (setf entry (aref row column))
+	     (if (or (pd.isnull entry)
+		     (== entry (string "unknown")))
+		 (setf value np.nan
+		       unit (string ""))
+		 (do0
+		  (setf
+		   entry_stripped (entry.strip)
+		   entry_parts (entry_stripped.split (string " "))
+		   value_string (dot (aref entry_parts 0)
+				     (replace (string ",") (string "")))
+		   value (or
+			  (and (== value_string (string "System"))
+			       -1d0)
+			  (float value_string))
+		   unit (dot (string " ")
+			     (join (aref entry_parts "1:"))))
 
-			    ,@(let ((l `((GFLOPS TFLOPS 1000)
-					(MPixel GPixel 1000)
-					 (MTexel GTexel 1000)
-					 (MVertices GVertices 1000))))
-				(loop for e in l collect
-				     (destructuring-bind (small big factor) e
-				      `(if (in (string ,small) unit)
-					  (setf unit (unit.replace (string ,small)
-								   (string ,big)
-								   )
-						value (/ value ,factor))))))))
+		  ,@(let ((l `((GFLOPS TFLOPS 1000)
+			       (MPixel GPixel 1000)
+			       (MTexel GTexel 1000)
+			       (MVertices GVertices 1000))))
+		      (loop for e in l collect
+			   (destructuring-bind (small big factor) e
+			     `(if (in (string ,small) unit)
+				  (setf unit (unit.replace (string ,small)
+							   (string ,big)
+							   )
+					value (/ value ,factor)))))))))
+	    ("Exception as e"
+	     (print (dot (string "warn {}")
+			 (format e)))
+	     (return -2d0)))
 	   (if value_p
 	       (return value)
 	       (return unit)))
